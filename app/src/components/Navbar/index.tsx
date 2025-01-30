@@ -93,7 +93,7 @@ export default function NavBar(): JSX.Element{
                 <NavbarItem>
                     <Switch startContent={<Moon />} endContent={<Sun />} size="lg" className="hidden md:block"
                      onChange={() => setTheme(theme === "dark" ? "light" : "dark")}
-                     isSelected={theme === "dark"} />
+                     isSelected={theme === "dark"} aria-label="Cambiar el tema de la aplicación" />
                 </NavbarItem>
                 <NavbarItem>
                     <Input isReadOnly value={currentTime.toString()} label="Tiempo transcurrido" />
