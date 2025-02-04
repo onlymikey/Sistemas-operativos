@@ -36,9 +36,10 @@ export default function Process({ firstNumber, secondNumber, operation, id, name
     useEffect(() => {
         if (isRunning) {
             if (currentTime <= 0) {
-                setCurrentOperation((prev: any[]) =>
-                    prev.filter((process) => process.uniqueId !== uniqueId) // Filtra por uniqueId
-                );
+                setCurrentOperation((prev: any[]) => {
+                    const updatedProcesses = prev.map((process: any[]) => process.filter((item: any) => item.uniqueId !== uniqueId));
+                    return updatedProcesses.filter((process: any[]) => process.length > 0);
+                });
 
                 setDone((prev: any[]) => [
                     ...prev,

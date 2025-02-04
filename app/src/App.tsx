@@ -30,7 +30,8 @@ export default function App() {
         ...process,
         uniqueId: Date.now() + index, // ID único correctamente generado
       }));
-      setCurrentOperation((prev) => [...prev, ...processesWithIds]);
+      const dividerProcess = splitArray(processesWithIds, 5);
+      setCurrentOperation((prev) => [...prev, ...dividerProcess]);
       setData([]);
     
     }
@@ -59,7 +60,7 @@ useEffect(() => {
             ))}
           </Section>
           <Section title="Procesos activos">
-            {splitArray(currentOperation, 5).map((batch: any, indexFather: number) => (
+            {currentOperation.map((batch: any, indexFather: number) => (
               <Batch key={indexFather} index={indexFather}>
                 {batch.map((process: any, index: number) => (
                   <Process

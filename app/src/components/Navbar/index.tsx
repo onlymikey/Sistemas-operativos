@@ -17,6 +17,7 @@ export default function NavBar(): JSX.Element{
     const [currentValue, setCurrentValue] = useState<number>(0);
     const {data, setData, isRunning, setIsRunning} = useContext(DataProvider);
     const [currentTime, setCurrentTime] = useState<number>(0);
+    const [time, setTime] = useState<number>(1);
 
 
     useEffect(() => {
@@ -82,7 +83,11 @@ export default function NavBar(): JSX.Element{
                             name="name"
                             isRequired />
                             <Input label="Tiempo" placeholder="Tiempo de ejecucion" type="number" variant="bordered"
-                            name="time" isRequired />
+                            name="time" isRequired
+                            onChange={(event: ChangeEvent<HTMLInputElement>) => setTime(parseInt(event.target.value))}
+                            isInvalid={time <= 0 || isNaN(time)}
+                            errorMessage={isNaN(time) ? "El valor debe ser un numero" : "El tiempo debe ser mayor a 0"}
+                            />
                             <Button type="submit" variant="flat" color="primary" className='w-full'>Crear nuevo proceso</Button>
                         </Form>
                     </PopoverContent>
