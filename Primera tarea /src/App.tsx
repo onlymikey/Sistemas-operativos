@@ -56,7 +56,7 @@ useEffect(() => {
         <section className="w-full md:w-3/4 grid grid-cols-1 md:grid-cols-3 gap-4 p-2 ">
           <Section title="Procesos inactivos">
             {splitArray(data, 5).map((batch: any, index: number) => (
-              <Batch key={index} index={index + (splitArray(done, 5).length > 0 ? splitArray(done, 5).length : splitArray(currentOperation, 5).length)}>
+              <Batch key={index} index={index + Math.floor(done.length / 5) + Math.ceil(currentOperation.flat().length / 5)}>
                 {batch.map((process: any, index: number) => (
                   <Process key={index} id={index + 1} {...process} operation={parseInt(process.operation)} />
                 ))}
