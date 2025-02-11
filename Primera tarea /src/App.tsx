@@ -22,7 +22,6 @@ export default function App() {
     return result;
   }, []);
 
-  // Modifica este efecto en App.tsx
   useEffect(() => {
     if (isRunning) {
       // data ahora es un array plano de procesos
@@ -57,7 +56,7 @@ useEffect(() => {
         <section className="w-full md:w-3/4 grid grid-cols-1 md:grid-cols-3 gap-4 p-2 ">
           <Section title="Procesos inactivos">
             {splitArray(data, 5).map((batch: any, index: number) => (
-              <Batch key={index} index={index}>
+              <Batch key={index} index={index + (splitArray(done, 5).length > 0 ? splitArray(done, 5).length : splitArray(currentOperation, 5).length)}>
                 {batch.map((process: any, index: number) => (
                   <Process key={index} id={index + 1} {...process} operation={parseInt(process.operation)} />
                 ))}
@@ -66,12 +65,11 @@ useEffect(() => {
           </Section>
           <Section title="Procesos activos">
             {currentOperation.map((batch: any, indexFather: number) => (
-              <Batch key={indexFather} index={indexFather}>
+              <Batch key={indexFather} index={Math.floor(done.length / 5)}>
                 {batch.map((process: any, index: number) => (
                   <Process
                     key={process.uniqueId} // Key única estable
                     uniqueId={process.uniqueId} // Pasamos el uniqueId
-                    id={index + 1}
                     {...process}
                     operation={parseInt(process.operation)}
                     isRunning={index === 0 && indexFather === 0}
@@ -89,7 +87,6 @@ useEffect(() => {
                     {...process}
                     operation={parseInt(process.operation)}
                     isDone
-                    id={index + 1}
                   />
                 ))}
               </Batch>

@@ -18,6 +18,7 @@ export default function NavBar(): JSX.Element{
     const {data, setData, isRunning, setIsRunning} = useContext(DataProvider);
     const [currentTime, setCurrentTime] = useState<number>(0);
     const [time, setTime] = useState<number>(1);
+    const [id, setId] = useState<string | null>(null);
 
 
     useEffect(() => {
@@ -87,6 +88,12 @@ export default function NavBar(): JSX.Element{
                             onChange={(event: ChangeEvent<HTMLInputElement>) => setTime(parseInt(event.target.value))}
                             isInvalid={time <= 0 || isNaN(time)}
                             errorMessage={isNaN(time) ? "El valor debe ser un numero" : "El tiempo debe ser mayor a 0"}
+                            />
+                            <Input isRequired type="text" name="id"
+                            onChange={(event: ChangeEvent<HTMLInputElement>) => setId(event.target.value)}
+                            label="ID " placeholder="ID del proceso"
+                            isInvalid={data.some((process: any) => process.id === id)}
+                            variant="bordered" errorMessage="El ID ya existe"
                             />
                             <Button type="submit" variant="flat" color="primary" className='w-full'>Crear nuevo proceso</Button>
                         </Form>
