@@ -1,35 +1,19 @@
 import { Navbar, NavbarContent, NavbarItem, Switch, Button, Popover, PopoverContent, 
-    PopoverTrigger, Form, SelectItem, Select, Input 
+    PopoverTrigger, Form, Input 
 } from "@heroui/react";
 import { useTheme } from "@heroui/use-theme";
-import { FaPlay as Play, FaCloudMoon as Moon, FaPlus as Plus, FaMinus as Minus, FaDivide as Divide, FaPercentage as Percentage} from "react-icons/fa";
+import { FaPlay as Play, FaCloudMoon as Moon, FaPlus as Plus} from "react-icons/fa";
 import { CiSun as Sun } from "react-icons/ci";
 import { FormEvent } from "react";
 import { DataProvider } from "../../providers/DataProvider";
-import { useContext, useState, useEffect } from "react";
+import { useContext, useState } from "react";
 
 
-export default function NavBar(): JSX.Element{
+export default function NavBar({time}: {time: number}): JSX.Element{
     const {theme, setTheme}: {theme: string, setTheme: (value: string) => void} = useTheme();
-    const [currentTime, setCurrentTime] = useState<number>(0);
     const [isOpen, setIsOpen] = useState<boolean>(false);
-    const {data, setData, isRunning, setIsRunning} = useContext(DataProvider);
+    const {data, setData, setIsRunning} = useContext(DataProvider);
     const [value, setValue] = useState<number>(1);
-
-
-    useEffect(() => {
-    let interval: any; 
-    
-    if (isRunning) {
-      interval = setInterval(() => {
-        setCurrentTime((prev: number) => prev + 1);
-      }, 1000);
-    }
-  
-    return () => {
-      if (interval) clearInterval(interval);
-    };
-  }, [isRunning]); // Solo dependemos de isRunning
 
 
     function handleSumbit(event: FormEvent<HTMLFormElement>){
@@ -38,11 +22,13 @@ export default function NavBar(): JSX.Element{
             {
                 firstNumber: Math.floor(Math.random() * 100), 
                 secondNumber: Math.floor(Math.random() * 100),
-                operation: Math.floor(Math.random() * 4) + 1,
-                time: Math.floor(Math.random() * 10) + 1,
+                operation: Math.floor(Math.random() * 5) + 1,
+                time: Math.floor(Math.random() * 14) + 6,
                 id: index + +1
             }
         ))
+        setData((prev: any[]) => [...prev, ...temporalData]);
+        setIsOpen(false);
     }
 
     return (
@@ -83,7 +69,7 @@ export default function NavBar(): JSX.Element{
                      isSelected={theme === "dark"} aria-label="Cambiar el tema de la aplicación" />
                 </NavbarItem>
                 <NavbarItem>
-                    <Input isReadOnly value={currentTime.toString()} label="Tiempo transcurrido" />
+                    <Input isReadOnly value={time.toString()} label="Tiempo transcurrido" />
                 </NavbarItem>
             </NavbarContent>
         </Navbar>
