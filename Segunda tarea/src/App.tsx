@@ -12,7 +12,6 @@ export default function App() {
   const [data, setData] = useState<any[]>([]);
   const [isRunning, setIsRunning] = useState<boolean>(false);
   const [currentOperation, setCurrentOperation] = useState<any[]>([]);
-  const [currentValue, setCurrentValue] = useState<number>(0);
   const [done, setDone] = useState<any[]>([]);
   const [time, setTime] = useState<number>(0);
   const splitArray = useCallback(<T,>(array: T[], size: number): T[][] => {
@@ -52,12 +51,12 @@ useEffect(() => {
   return (
     <main className="bg-background text-inherit w-full h-screen flex items-center flex-col justify-start">
 
-      <DataProvider.Provider value={{ data, setData, isRunning, setIsRunning, currentValue, setCurrentValue, setDone, setCurrentOperation, currentOperation, done, setTime }}>
+      <DataProvider.Provider value={{ data, setData, isRunning, setIsRunning, setDone, setCurrentOperation, currentOperation, done, setTime }}>
         <NavBar time={time} />
         <section className="w-full md:w-3/4 grid grid-cols-1 md:grid-cols-3 gap-4 p-2 ">
           <Section title="Procesos inactivos">
             {splitArray(data, 5).map((batch: any, index: number) => (
-              <Batch key={index} index={index +  Math.floor(done.length / 5) + Math.ceil(currentOperation.flat().length / 5)}>
+              <Batch key={index} index={index + 1 + Math.floor(done.length / 5) + Math.ceil(currentOperation.flat().length / 5)}>
                 {batch.map((process: any, index: number) => (
                   <Process key={index} id={index + 1} {...process} operation={parseInt(process.operation)} />
                 ))}
@@ -66,7 +65,7 @@ useEffect(() => {
           </Section>
           <Section title="Procesos activos">
             {currentOperation.map((batch: any, indexFather: number) => (
-              <Batch key={indexFather} index={indexFather + Math.floor(done.length / 5)}>
+              <Batch key={indexFather} index={indexFather + 1 + Math.floor(done.length / 5)}>
                 {batch.map((process: any, index: number) => (
                   <Process
                     key={process.uniqueId} // Key única estable
@@ -81,7 +80,7 @@ useEffect(() => {
           </Section>
           <Section title="Procesos finalizados">
             {splitArray(done, 5).map((batch: any[], index: number) => (
-              <Batch key={index} index={index}>
+              <Batch key={index} index={index +1}>
                 {batch.map((process: any, index: number) => (
                   <Process
                     key={process.uniqueId || index}

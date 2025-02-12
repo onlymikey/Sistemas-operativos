@@ -18,7 +18,7 @@ type ProcessProps = {
 
 export default function Process({ firstNumber, secondNumber, operation, id, time, isRunning = false, isDone = false, uniqueId }: ProcessProps): JSX.Element {
     const [currentTime, setCurrentTime] = useState<number>(parseInt(time));
-    const { setCurrentValue, setDone, setCurrentOperation, setTime } = useContext(DataProvider);
+    const { setDone, setCurrentOperation, setTime } = useContext(DataProvider);
     const variants: Variants = {
         initial: {
             scale: 0.8,
@@ -43,9 +43,8 @@ export default function Process({ firstNumber, secondNumber, operation, id, time
 
                 setDone((prev: any[]) => [
                     ...prev,
-                    { firstNumber, secondNumber, operation, id, name, time },
+                    { firstNumber, secondNumber, operation, id, time },
                 ]);
-                setCurrentValue((prev: number) => prev + 1);
             } else {
                 const timeout = setTimeout(() => {
                     setCurrentTime((prev: number) => prev - 1);
@@ -56,7 +55,7 @@ export default function Process({ firstNumber, secondNumber, operation, id, time
                 };
             }
         }
-    }, [isRunning, currentTime, firstNumber, secondNumber, operation, id, time, uniqueId]);
+    }, [isRunning, currentTime]);
 
 
     function getOperation(value: number): string {
