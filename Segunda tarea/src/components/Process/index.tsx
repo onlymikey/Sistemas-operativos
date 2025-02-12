@@ -16,7 +16,7 @@ type ProcessProps = {
     uniqueId?: number;  
 }
 
-export default function Process({ firstNumber, secondNumber, operation, id, name, time, isRunning = false, isDone = false, uniqueId }: ProcessProps): JSX.Element {
+export default function Process({ firstNumber, secondNumber, operation, id, time, isRunning = false, isDone = false, uniqueId }: ProcessProps): JSX.Element {
     const [currentTime, setCurrentTime] = useState<number>(parseInt(time));
     const { setCurrentValue, setDone, setCurrentOperation } = useContext(DataProvider);
     const variants: Variants = {
@@ -55,7 +55,7 @@ export default function Process({ firstNumber, secondNumber, operation, id, name
                 };
             }
         }
-    }, [isRunning, currentTime, firstNumber, secondNumber, operation, id, name, time, uniqueId]);
+    }, [isRunning, currentTime, firstNumber, secondNumber, operation, id, time, uniqueId]);
 
 
     function getOperation(value: number): string {
@@ -99,7 +99,6 @@ export default function Process({ firstNumber, secondNumber, operation, id, name
                     <p className='font-inter text-3xl font-extrabold'>{firstNumber} {getOperation(operation)} {secondNumber} {isDone && "= " + getResult(firstNumber, secondNumber, operation)}</p>
                     <section className='w-full flex items-center justify-between flex-row'>
                         <p className="font-inter text-semibold">Tiempo: {currentTime}s</p>
-                        <Chip color="primary" size="sm">{name}</Chip>
                     </section>
                 </CardBody>
             </Card>
