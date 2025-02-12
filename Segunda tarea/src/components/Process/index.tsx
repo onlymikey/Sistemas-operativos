@@ -14,9 +14,10 @@ type ProcessProps = {
     isRunning?: boolean;
     isDone?: boolean;
     uniqueId?: number;  
+    isErrored?: boolean; 
 }
 
-export default function Process({ firstNumber, secondNumber, operation, id, time, isRunning = false, isDone = false, uniqueId }: ProcessProps): JSX.Element {
+export default function Process({ firstNumber, secondNumber, operation, id, time, isRunning = false, isDone = false, uniqueId, isErrored = false }: ProcessProps): JSX.Element {
     const [currentTime, setCurrentTime] = useState<number>(parseInt(time));
     const { setDone, setCurrentOperation, setTime } = useContext(DataProvider);
     const variants: Variants = {
@@ -57,6 +58,31 @@ export default function Process({ firstNumber, secondNumber, operation, id, time
         }
     }, [isRunning, currentTime]);
 
+    useEffect(() => {
+        const handleKeyboardEvent = (event: KeyboardEvent) => {
+            if (event.key === "i" && isRunning){
+                setCurrentOperation((prev: any[]) => {
+                    const flatArray: any[] = prev.flat(); 
+                    const constFirstElement = flatArray.shift(); 
+                    return [[...flatArray, constFirstElement]];
+                })
+            }
+            if (event.key === "e" && isRunning){
+                setDone((prev: any[]) => [...prev, {firstNumber, secondNumber, operation, id, time, isErrored: true}]);
+                setCurrentOperation((prev: any[]) => {
+                    const flatArray: any[] = prev.flat(); 
+                    const updatedArray = flatArray.filter((item: any) => item.id !== id); 
+                    return updatedArray.length > 0 ? [updatedArray] : [];
+                })
+            }
+        }
+        window.addEventListener('keydown', handleKeyboardEvent);
+        return (): void => {
+            window.removeEventListener('keydown', handleKeyboardEvent);
+        }
+
+    })
+
 
     function getOperation(value: number): string {
         switch (value) {
@@ -93,9 +119,11 @@ export default function Process({ firstNumber, secondNumber, operation, id, time
     }
     return (
         <motion.div variants={variants} initial="initial" animate="animate" exit="exit" className="mb-3">
-            <Card className={isRunning ? "bg-red-600/20 border-red-600 border-1 border-dashed" : 'bg-sky-500/20 border-sky-500 border-1 border-dashed'}>
+            <Card className='bg-sky-500/20 border-sky-500 border-1 border-dashed data-[status="running"]:bg-green-600/20 data-[status="running"]:border-green-600 data-[status="error"]:bg-red-600/20 data-[status="error"]:border-red-600' data-status={isRunning ? "running" : isErrored ? "error" : "done"}>
                 <CardBody className='flex flex-col items-center justify-start'>
-                    <h3 className='font-inter font-semibold text-start w-full'>Proceso #{id}</h3>
+                    <div>
+                        <h3 className='font-inter font-semibold text-start w-full'>Proceso #{id}</h3>
+                    </div>
                     <p className='font-inter text-3xl font-extrabold'>{firstNumber} {getOperation(operation)} {secondNumber} {isDone && "= " + getResult(firstNumber, secondNumber, operation)}</p>
                     <section className='w-full flex items-center justify-between flex-row'>
                         <p className="font-inter text-semibold">Tiempo: {currentTime}s</p>

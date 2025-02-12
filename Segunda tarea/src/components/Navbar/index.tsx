@@ -21,7 +21,7 @@ export default function NavBar({time}: {time: number}): JSX.Element{
         const temporalData: Record<string, any>[] = Array.from({length: value}, (_, index) => (
             {
                 firstNumber: Math.floor(Math.random() * 100), 
-                secondNumber: Math.floor(Math.random() * 100),
+                secondNumber: Math.floor(Math.random() * 100) + 1,
                 operation: Math.floor(Math.random() * 5) + 1,
                 time: Math.floor(Math.random() * 14) + 6,
                 id: index + +1
