@@ -33,7 +33,7 @@ export default function NavBar({time}: {time: number}): JSX.Element{
     }
 
     return (
-        <Navbar isBordered >
+        <Navbar isBordered  position="sticky">
             <NavbarContent justify="start">
                 <NavbarItem>
                     <Button startContent={<Play />} variant='flat' color='secondary' isDisabled={data.length === 0}
