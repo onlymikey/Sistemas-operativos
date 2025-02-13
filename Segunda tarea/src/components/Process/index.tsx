@@ -171,7 +171,7 @@ export default function Process({
           </div>
           <p className="font-inter text-3xl font-extrabold">
             {firstNumber} {getOperation(operation)} {secondNumber}{" "}
-            {isDone && "= " + getResult(firstNumber, secondNumber, operation)}
+            {(isDone && !isErrored) && "= " + getResult(firstNumber, secondNumber, operation)}
           </p>
           <section className="w-full flex items-center justify-between flex-row *:font-inter *:font-semibold">
             <p>Tiempo máximo: {time}s</p>
