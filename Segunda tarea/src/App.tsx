@@ -62,7 +62,7 @@ export default function App() {
     return () => {
       window.removeEventListener("keydown", hanldeKeyboardEVent);
     };
-  }, []);
+  });
 
   return (
     <main className="bg-background text-inherit w-full h-screen flex items-center flex-col justify-start">
@@ -98,6 +98,7 @@ export default function App() {
                     id={index + 1}
                     {...process}
                     operation={parseInt(process.operation)}
+                    timeLeft={process.time}
                   />
                 ))}
               </Batch>
@@ -127,6 +128,7 @@ export default function App() {
                 {batch.map((process: any, index: number) => (
                   <Process
                     key={process.uniqueId || index}
+                    timeLeft="0"
                     {...process}
                     operation={parseInt(process.operation)}
                     isDone

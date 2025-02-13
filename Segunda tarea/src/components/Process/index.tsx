@@ -11,9 +11,9 @@ type ProcessProps = {
   id: number;
   name: string;
   time: string;
+  timeLeft?: string | undefined; 
   isRunning?: boolean;
   isDone?: boolean;
-  uniqueId?: number;
   isErrored?: boolean;
 };
 
@@ -25,8 +25,8 @@ export default function Process({
   time,
   isRunning = false,
   isDone = false,
-  uniqueId,
   isErrored = false,
+  timeLeft = undefined
 }: ProcessProps): JSX.Element {
   const [currentTime, setCurrentTime] = useState<number>(parseInt(time));
   const { setDone, setCurrentOperation, setTime } = useContext(DataProvider);
@@ -49,7 +49,7 @@ export default function Process({
       if (currentTime <= 0) {
         setCurrentOperation((prev: any[]) => {
           const updatedProcesses = prev.map((process: any[]) =>
-            process.filter((item: any) => item.uniqueId !== uniqueId)
+            process.filter((item: any) => item.id !== id)
           );
           return updatedProcesses.filter(
             (process: any[]) => process.length > 0
@@ -58,7 +58,7 @@ export default function Process({
 
         setDone((prev: any[]) => [
           ...prev,
-          { firstNumber, secondNumber, operation, id, time },
+          { firstNumber, secondNumber, operation, id, time, timeLeft: currentTime },
         ]);
       } else {
         const timeout = setTimeout(() => {
@@ -84,7 +84,7 @@ export default function Process({
       if (event.key === "e" && isRunning) {
         setDone((prev: any[]) => [
           ...prev,
-          { firstNumber, secondNumber, operation, id, time, isErrored: true },
+          { firstNumber, secondNumber, operation, id, time, isErrored: true, timeLeft: currentTime },
         ]);
         setCurrentOperation((prev: any[]) => {
           const flatArray: any[] = prev.flat();
@@ -149,17 +149,33 @@ export default function Process({
         data-status={isRunning ? "running" : isErrored ? "error" : "done"}
       >
         <CardBody className="flex flex-col items-center justify-start">
-          <div>
-            <h3 className="font-inter font-semibold text-start w-full">
+          <div className="w-full flex justify-between">
+            <h3 className="font-inter font-semibold text-start w-full flex justify-start">
               Proceso #{id}
             </h3>
+            {isRunning && (
+                <Chip color="primary" variant="flat">
+                    En ejecución
+                </Chip>
+            )}
+            {(isDone && !isErrored) && (
+                <Chip color="success" variant="flat">
+                    Completado
+                </Chip>
+            )}
+            {isErrored && (
+                <Chip color="danger">
+                    Error
+                </Chip>
+            )}
           </div>
           <p className="font-inter text-3xl font-extrabold">
             {firstNumber} {getOperation(operation)} {secondNumber}{" "}
             {isDone && "= " + getResult(firstNumber, secondNumber, operation)}
           </p>
-          <section className="w-full flex items-center justify-between flex-row">
-            <p className="font-inter text-semibold">Tiempo: {currentTime}s</p>
+          <section className="w-full flex items-center justify-between flex-row *:font-inter *:font-semibold">
+            <p>Tiempo máximo: {time}s</p>
+            <p>Tiempo faltante: {timeLeft !== undefined ? timeLeft : currentTime}s</p>
           </section>
         </CardBody>
       </Card>

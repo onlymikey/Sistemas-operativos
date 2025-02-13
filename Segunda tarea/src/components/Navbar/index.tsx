@@ -1,6 +1,7 @@
 import { Navbar, NavbarContent, NavbarItem, Switch, Button, Popover, PopoverContent, 
     PopoverTrigger, Form, Input 
 } from "@heroui/react";
+import NumberFlow from "@number-flow/react";
 import { useTheme } from "@heroui/use-theme";
 import { FaPlay as Play, FaCloudMoon as Moon, FaPlus as Plus} from "react-icons/fa";
 import { CiSun as Sun } from "react-icons/ci";
@@ -40,6 +41,11 @@ export default function NavBar({time}: {time: number}): JSX.Element{
                         Iniciar
                     </Button>
                 </NavbarItem>
+                <NavbarItem>
+                <Switch startContent={<Moon />} endContent={<Sun />} size="lg" className="hidden md:block"
+                     onChange={() => setTheme(theme === "dark" ? "light" : "dark")}
+                     isSelected={theme === "dark"} aria-label="Cambiar el tema de la aplicación" />
+                </NavbarItem>
             </NavbarContent>
             <NavbarContent justify="center">
                 <NavbarItem>
@@ -63,13 +69,9 @@ export default function NavBar({time}: {time: number}): JSX.Element{
                 </NavbarItem>
             </NavbarContent>
             <NavbarContent justify="end">
-                <NavbarItem>
-                    <Switch startContent={<Moon />} endContent={<Sun />} size="lg" className="hidden md:block"
-                     onChange={() => setTheme(theme === "dark" ? "light" : "dark")}
-                     isSelected={theme === "dark"} aria-label="Cambiar el tema de la aplicación" />
-                </NavbarItem>
-                <NavbarItem>
-                    <Input isReadOnly value={time.toString()} label="Tiempo transcurrido" />
+                <NavbarItem className="w-32">
+                    <NumberFlow value={time} className="font-extrabold text-4xl mb-0"/>
+                    <p className='text-neutral-400 text-tiny mb-2'>segundos</p>
                 </NavbarItem>
             </NavbarContent>
         </Navbar>
