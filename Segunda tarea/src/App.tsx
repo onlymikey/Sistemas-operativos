@@ -4,7 +4,7 @@ import Batch from "./components/Batch";
 import Process from "./components/Process";
 import { useEffect, useState, useCallback } from "react";
 import { DataProvider } from "./providers/DataProvider";
-
+import NoValue from "./components/NoValues";
 export default function App() {
   const [data, setData] = useState<any[]>([]);
   const [isRunning, setIsRunning] = useState<boolean>(false);
@@ -65,7 +65,7 @@ export default function App() {
   });
 
   return (
-    <main className="bg-background text-inherit w-full h-screen flex items-center flex-col justify-start">
+    <main className="bg-background  bg-[url('https://www.heroui.pro/_next/image?url=%2Fimages%2Fhero-gradient2.webp&w=1920&q=75')] bg-cover bg-center text-inherit w-full h-screen flex items-center flex-col justify-start">
       <DataProvider.Provider
         value={{
           data,
@@ -82,60 +82,81 @@ export default function App() {
         <NavBar time={time} />
         <section className="w-full md:w-3/4 grid grid-cols-1 md:grid-cols-3 gap-4 p-2 ">
           <Section title="Procesos inactivos">
-            {splitArray(data, 5).map((batch: any, index: number) => (
-              <Batch
-                key={index}
-                index={
-                  index +
-                  1 +
-                  Math.floor(done.length / 5) +
-                  Math.ceil(currentOperation.flat().length / 5)
-                }
-              >
-                {batch.map((process: any, index: number) => (
-                  <Process
-                    key={index}
-                    id={index + 1}
-                    {...process}
-                    operation={parseInt(process.operation)}
-                    timeLeft={process.time}
-                  />
-                ))}
-              </Batch>
-            ))}
+            {data.length > 0 ? (
+              splitArray(data, 5).map((batch: any, index: number) => (
+                <Batch
+                  key={index}
+                  index={
+                    index +
+                    1 +
+                    Math.floor(done.length / 5) +
+                    Math.ceil(currentOperation.flat().length / 5)
+                  }
+                >
+                  {batch.map((process: any, index: number) => (
+                    <Process
+                      key={index}
+                      id={index + 1}
+                      {...process}
+                      operation={parseInt(process.operation)}
+                      timeLeft={process.time}
+                    />
+                  ))}
+                </Batch>
+              ))
+            ) : (
+              <NoValue
+                title="No hay procesos"
+                description="No hay procesos, intenta agregar uno desde la barra de navegación."
+              />
+            )}
           </Section>
           <Section title="Procesos activos">
-            {currentOperation.map((batch: any, indexFather: number) => (
-              <Batch
-                key={indexFather}
-                index={indexFather + 1 + Math.floor(done.length / 5)}
-              >
-                {batch.map((process: any, index: number) => (
-                  <Process
-                    key={process.uniqueId} // Key única estable
-                    uniqueId={process.uniqueId} // Pasamos el uniqueId
-                    {...process}
-                    operation={parseInt(process.operation)}
-                    isRunning={index === 0 && isRunning}
-                  />
-                ))}
-              </Batch>
-            ))}
+            {currentOperation.length > 0 ? (
+              currentOperation.map((batch: any, indexFather: number) => (
+                <Batch
+                  key={indexFather}
+                  index={indexFather + 1 + Math.floor(done.length / 5)}
+                >
+                  {batch.map((process: any, index: number) => (
+                    <Process
+                      key={process.uniqueId} // Key única estable
+                      uniqueId={process.uniqueId} // Pasamos el uniqueId
+                      {...process}
+                      operation={parseInt(process.operation)}
+                      isRunning={index === 0 && isRunning}
+                    />
+                  ))}
+                </Batch>
+              ))
+            ) : (
+              <NoValue
+                title="No hay procesos"
+                description="Agrega un proceso desde la barra de navegación e inicia el programa."
+              />
+            )}
           </Section>
           <Section title="Procesos finalizados">
-            {splitArray(done, 5).map((batch: any[], index: number) => (
-              <Batch key={index} index={index + 1}>
-                {batch.map((process: any, index: number) => (
-                  <Process
-                    key={process.uniqueId || index}
-                    timeLeft="0"
-                    {...process}
-                    operation={parseInt(process.operation)}
-                    isDone
-                  />
-                ))}
-              </Batch>
-            ))}
+            {done.length > 0 ? (
+              splitArray(done, 5).map((batch: any[], index: number) => (
+                <Batch key={index} index={index + 1}>
+                  {batch.map((process: any, index: number) => (
+                    <Process
+                      key={process.uniqueId || index}
+                      timeLeft="0"
+                      {...process}
+                      operation={parseInt(process.operation)}
+                      isDone
+                    />
+                  ))}
+                </Batch>
+              ))
+            ) : (
+              <NoValue
+                title="No hay procesos finalizados"
+                description="Aquí verás los procesos finalizados."
+              />
+            )}
           </Section>
         </section>
       </DataProvider.Provider>
