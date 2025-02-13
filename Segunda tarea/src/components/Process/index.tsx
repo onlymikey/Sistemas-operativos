@@ -1,4 +1,4 @@
-import { Card, CardBody, Chip } from "@heroui/react";
+import { Card, CardBody, Chip, Progress } from "@heroui/react";
 import { motion } from "framer-motion";
 import type { Variants } from "framer-motion";
 import { useEffect, useState } from "react";
@@ -147,7 +147,10 @@ export default function Process({
       <Card
         className='bg-sky-500/20 border-sky-500 border-1 border-dashed data-[status="running"]:bg-green-600/20 data-[status="running"]:border-green-600 data-[status="error"]:bg-red-600/20 data-[status="error"]:border-red-600'
         data-status={isRunning ? "running" : isErrored ? "error" : "done"}
-      >
+      > 
+      <Progress value={(((parseInt(time) - (timeLeft !== undefined ? parseInt(timeLeft) : currentTime)) / parseInt(time)) * 100)} className="m-2 w-[96%]" classNames={{
+        indicator: "bg-gradient-to-r from-sky-300 via-sky-500 to-purple-600",
+      }}/>
         <CardBody className="flex flex-col items-center justify-start">
           <div className="w-full flex justify-between">
             <h3 className="font-inter font-semibold text-start w-full flex justify-start">

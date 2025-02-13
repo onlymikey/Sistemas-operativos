@@ -65,7 +65,7 @@ export default function App() {
   });
 
   return (
-    <main className="bg-background  bg-[url('https://www.heroui.pro/_next/image?url=%2Fimages%2Fhero-gradient2.webp&w=1920&q=75')] bg-cover bg-center text-inherit w-full h-screen flex items-center flex-col justify-start">
+    <main className="bg-background  bg-[url('https://www.heroui.pro/_next/image?url=%2Fimages%2Fhero-gradient2.webp&w=1920&q=75')] bg-contain bg-repeat bg-center text-inherit w-full h-screen flex items-center flex-col justify-start">
       <DataProvider.Provider
         value={{
           data,
