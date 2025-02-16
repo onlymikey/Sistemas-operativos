@@ -6,7 +6,7 @@ import { useEffect, useState, useCallback } from "react";
 import { DataProvider } from "./providers/DataProvider";
 import NoValue from "./components/NoValues";
 
-export default function App() {
+export default function Second() {
   const [data, setData] = useState<any[]>([]);
   const [isRunning, setIsRunning] = useState<boolean>(false);
   const [currentOperation, setCurrentOperation] = useState<any[]>([]);

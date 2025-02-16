@@ -13,6 +13,9 @@ export default function HomePage(): JSX.Element{
           <Homework title="Procesamiento por lotes" imageUrl="./primero.png" urlTo="/first-homework">
             Simulación de procesos en un sistema operativo usando lotes, con capacidad de 5 procesos por lotes. Sin capacidad de interacción más que la visualización de los procesos e inicio de los mismos.
           </Homework>
+          <Homework title="Interacción de procesos." imageUrl="./segundo.png" urlTo="/second-homework">
+            Simulacion de procesos de un sistema operativo, con la oportunidad de interacturar con los procesos, pausar, reunudar, eliminar procesos y agregar nuevos procesos mendiante la entreada del teclado.
+          </Homework>
         </section>
       </main>
     )
