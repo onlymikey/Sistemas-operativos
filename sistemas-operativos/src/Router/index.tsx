@@ -1,20 +1,26 @@
 import { BrowserRouter as BrowserRouter, Route, Routes } from "react-router";
-import HomePage from "../pages/Homepage";
-import First from "../pages/FirstHomework";
-import Second from "../pages/SecondHomework";
-import DescriptionFirst from "../pages/DescriptionFirst";
-import DescriptionSecond from "../pages/DescriptionSecond";
+import { Suspense, lazy } from "react";
 
-export default function AppRouter(): JSX.Element{
+const HomePage = lazy(() => import("../pages/Homepage"));
+const First = lazy(() => import("../pages/FirstHomework"));
+const Second = lazy(() => import("../pages/SecondHomework"));
+const Third = lazy(() => import("../pages/ThirdHomework"));
+const DescriptionFirst = lazy(() => import("../pages/DescriptionFirst"));
+const DescriptionSecond = lazy(() => import("../pages/DescriptionSecond"));
+
+export default function AppRouter(): JSX.Element {
     return (
         <BrowserRouter>
-            <Routes>
-                <Route path="/" element={<HomePage/>}/>
-                <Route path="/workspace/first-homework" element={<First/>}/>
-                <Route path="/workspace/second-homework" element={<Second/>}/>
-                <Route path="/about/first" element={<DescriptionFirst/>}/>
-                <Route path="/about/second" element={<DescriptionSecond/>}/>
-            </Routes>
+            <Suspense>
+                <Routes>
+                    <Route path="/" element={<HomePage />} />
+                    <Route path="/workspace/first-homework" element={<First />} />
+                    <Route path="/workspace/second-homework" element={<Second />} />
+                    <Route path="/workspace/third-homework" element={<Third />} />
+                    <Route path="/about/first" element={<DescriptionFirst />} />
+                    <Route path="/about/second" element={<DescriptionSecond />} />
+                </Routes>
+            </Suspense>
         </BrowserRouter>
-    )
+    );
 }

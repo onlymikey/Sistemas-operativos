@@ -1,4 +1,4 @@
-import { Image, Button, Divider } from "@heroui/react";
+import { Image, Button, Divider, Card, CardBody, CardFooter } from "@heroui/react";
 import { Link } from "react-router";
 import type { ReactNode } from "react";
 import { FaGithub as Github, FaPlay as Play } from "react-icons/fa";
@@ -19,7 +19,7 @@ export default function AboutHomework({
 }): JSX.Element {
   return (
     <main className="dark w-full  bg-[url('./primero.png')] bg-center bg-cover min-h-screen bg-background text-foreground font-inter flex items-center flex-col justify-start">
-      <div className="w-full md:w-3/4 my-4 flex items-center flex-row space-x-3 md:space-x-10 justify-start">
+      <div className="w-full md:w-3/4 my-4 flex items-center flex-row space-x-3 md:space-x-10 justify-start p-2">
       <Button  as={Link} to="/" isIconOnly variant="flat" color="primary">
             <Back />
       </Button>
@@ -31,10 +31,12 @@ export default function AboutHomework({
         </div>
       </div>
       <Divider />
-      <div className="w-full md:w-4/6 my-4 p-3">
+      <Card className="w-full md:w-4/6 p-3 m-3">
       <Image src={imageUrl} alt="Preview of homework" className="w-full h-auto"/>
-        <p className="text-lg my-3">{children}</p>
-        <section className="flex flex-row items-center justify-end gap-2 w-full">
+        <CardBody>
+            <p className="text-lg my-3">{children}</p>
+        </CardBody>
+        <CardFooter className="flex flex-row items-center justify-end gap-2 w-full">
           <Button
             variant="flat"
             as={ExternalLink}
@@ -55,8 +57,8 @@ export default function AboutHomework({
           >
             Ver en acción
           </Button>
-        </section>
-      </div>
+        </CardFooter>
+      </Card>
     </main>
   );
 }
