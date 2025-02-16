@@ -10,10 +10,10 @@ export default function HomePage(): JSX.Element{
   
         </div>
         <section className="w-full md:w-3/4 grid grid-cols-1 md:grid-cols-3 gap-4 p-2 ">
-          <Homework title="Procesamiento por lotes" imageUrl="./primero.png" urlTo="/first-homework">
+          <Homework title="Procesamiento por lotes" imageUrl="./primero.png" urlTo="/about/first">
             Simulación de procesos en un sistema operativo usando lotes, con capacidad de 5 procesos por lotes. Sin capacidad de interacción más que la visualización de los procesos e inicio de los mismos.
           </Homework>
-          <Homework title="Interacción de procesos." imageUrl="./segundo.png" urlTo="/second-homework">
+          <Homework title="Interacción de procesos." imageUrl="./segundo.png" urlTo="/about/second">
             Simulacion de procesos de un sistema operativo, con la oportunidad de interacturar con los procesos, pausar, reunudar, eliminar procesos y agregar nuevos procesos mendiante la entreada del teclado.
           </Homework>
         </section>
