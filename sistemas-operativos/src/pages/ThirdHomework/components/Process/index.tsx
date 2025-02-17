@@ -5,12 +5,11 @@ import { useEffect, useState } from "react";
 import { useContext } from "react";
 import { DataProvider } from "../../providers/DataProvider";
 type ProcessProps = {
-  firstNumber: string;
-  secondNumber: string;
+  firstNumber: number;
+  secondNumber: number;
   operation: number;
   id: number;
-  name: string;
-  time: string;
+  time: number;
   timeLeft?: string | undefined; 
   isRunning?: boolean;
   isDone?: boolean;
@@ -28,7 +27,7 @@ export default function Process({
   isErrored = false,
   timeLeft = undefined
 }: ProcessProps): JSX.Element {
-  const [currentTime, setCurrentTime] = useState<number>(parseInt(time));
+  const [currentTime, setCurrentTime] = useState<number>(time);
   const { setDone, setCurrentOperation, setTime } = useContext(DataProvider);
   const variants: Variants = {
     initial: {
@@ -117,21 +116,21 @@ export default function Process({
   }
 
   function getResult(
-    firstNumber: string,
-    secondNumber: string,
+    firstNumber: number,
+    secondNumber: number,
     operation: number
   ): number {
     switch (operation) {
       case 1:
-        return parseInt(firstNumber) + parseInt(secondNumber);
+        return firstNumber + secondNumber;
       case 2:
-        return parseInt(firstNumber) - parseInt(secondNumber);
+        return firstNumber - secondNumber;
       case 3:
-        return parseInt(firstNumber) * parseInt(secondNumber);
+        return firstNumber * secondNumber;
       case 4:
-        return Math.round(parseInt(firstNumber) / parseInt(secondNumber));
+        return Math.round(firstNumber / secondNumber);
       case 5:
-        return parseInt(firstNumber) % parseInt(secondNumber);
+        return firstNumber % secondNumber;
       default:
         throw new Error("Invalid operation");
     }
@@ -148,7 +147,7 @@ export default function Process({
         className='bg-sky-500/20 border-sky-500 border-1 border-dashed data-[status="running"]:bg-green-600/20 data-[status="running"]:border-green-600 data-[status="error"]:bg-red-600/20 data-[status="error"]:border-red-600'
         data-status={isRunning ? "running" : isErrored ? "error" : "done"}
       > 
-      <Progress value={(((parseInt(time) - (timeLeft !== undefined ? parseInt(timeLeft) : currentTime)) / parseInt(time)) * 100)} className="m-2 w-[96%]" classNames={{
+      <Progress value={(((time - (timeLeft !== undefined ? parseInt(timeLeft) : currentTime)) / time) * 100)} className="m-2 w-[96%]" classNames={{
         indicator: "bg-gradient-to-r from-sky-300 via-sky-500 to-purple-600",
       }}/>
         <CardBody className="flex flex-col items-center justify-start">
