@@ -4,6 +4,7 @@ import type { Variants } from "framer-motion";
 import { useEffect, useState } from "react";
 import { useContext } from "react";
 import { DataProvider } from "../../providers/DataProvider";
+import type { ProcesType } from "../..";
 type ProcessProps = {
   firstNumber: number;
   secondNumber: number;
@@ -46,16 +47,11 @@ export default function Process({
   useEffect(() => {
     if (isRunning) {
       if (currentTime <= 0) {
-        setCurrentOperation((prev: any[]) => {
-          const updatedProcesses = prev.map((process: any[]) =>
-            process.filter((item: any) => item.id !== id)
-          );
-          return updatedProcesses.filter(
-            (process: any[]) => process.length > 0
-          );
-        });
+        setCurrentOperation((prev: ProcesType[]) => {
+          return prev.filter((item: ProcesType) => item.id !== id); 
+        })
 
-        setDone((prev: any[]) => [
+        setDone((prev: ProcesType[]) => [
           ...prev,
           { firstNumber, secondNumber, operation, id, time, timeLeft: currentTime },
         ]);
@@ -74,21 +70,18 @@ export default function Process({
   useEffect(() => {
     const handleKeyboardEvent = (event: KeyboardEvent) => {
       if (event.key === "i" && isRunning) {
-        setCurrentOperation((prev: any[]) => {
-          const flatArray: any[] = prev.flat();
-          const constFirstElement = flatArray.shift();
-          return [[...flatArray, constFirstElement]];
-        });
+        setCurrentOperation((prev: ProcesType[]) => {
+          const [first, ...rest] = prev; 
+          return [rest, first]; 
+        })
       }
       if (event.key === "e" && isRunning) {
-        setDone((prev: any[]) => [
+        setDone((prev: ProcesType[]) => [
           ...prev,
           { firstNumber, secondNumber, operation, id, time, isErrored: true, timeLeft: currentTime },
         ]);
         setCurrentOperation((prev: any[]) => {
-          const flatArray: any[] = prev.flat();
-          const updatedArray = flatArray.filter((item: any) => item.id !== id);
-          return updatedArray.length > 0 ? [updatedArray] : [];
+          return prev.filter((item: ProcesType) => item.id !== id); 
         });
       }
     };

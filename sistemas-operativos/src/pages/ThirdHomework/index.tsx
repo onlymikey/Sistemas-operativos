@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import { DataProvider } from "./providers/DataProvider";
 import NoValue from "./components/NoValues";
 
-type ProcesType = {
+export type ProcesType = {
   firstNumber: number; 
   secondNumber: number; 
   operation: number; 

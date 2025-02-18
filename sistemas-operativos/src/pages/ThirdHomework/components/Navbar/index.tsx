@@ -8,7 +8,7 @@ import { CiSun as Sun } from "react-icons/ci";
 import { FormEvent } from "react";
 import { DataProvider } from "../../providers/DataProvider";
 import { useContext, useState } from "react";
-
+import type { ProcesType } from "../..";
 
 export default function NavBar({time}: {time: number}): JSX.Element{
     const {theme, setTheme}: {theme: string, setTheme: (value: string) => void} = useTheme();
@@ -17,7 +17,7 @@ export default function NavBar({time}: {time: number}): JSX.Element{
     const [value, setValue] = useState<number>(1);
 
 
-    function handleSumbit(event: FormEvent<HTMLFormElement>){
+    const handleSumbit = (event: FormEvent<HTMLFormElement>): void => {
         event.preventDefault();
         const temporalData: Record<string, any>[] = Array.from({length: value}, (_, index) => (
             {
@@ -25,10 +25,10 @@ export default function NavBar({time}: {time: number}): JSX.Element{
                 secondNumber: Math.floor(Math.random() * 100) + 1,
                 operation: Math.floor(Math.random() * 5) + 1,
                 time: Math.floor(Math.random() * 14) + 6,
-                id: index + +1
+                id: index + 1
             }
-        ))
-        setData((prev: any[]) => [...prev, ...temporalData]);
+        ));
+        setData((prev: ProcesType[]) => [...prev, ...temporalData]);
         setIsOpen(false);
     }
 
