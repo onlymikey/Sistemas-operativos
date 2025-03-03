@@ -29,7 +29,7 @@ export default function Process({
   isErrored,
   isBlocked
 }: ProcessType): JSX.Element {
-  const [passedTime, setPassedTime] = useState<number>(0);
+  const [passedTime, setPassedTime] = useState<number>(time - timeLeft);
   const { setTime, setRunningProcesses, setDoneProcesses, setBlockedProcesses } = useGlobalContext();
 
   useEffect(() => {
