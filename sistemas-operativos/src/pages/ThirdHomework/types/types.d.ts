@@ -9,4 +9,5 @@ export type ProcessType = {
     isErrored?: boolean;
     timeLeft?: number; 
     isWaiting?: boolean;
+    isBlocked?: boolean;
 }

@@ -8,6 +8,7 @@ import { GlobalContext } from "./provider/GlobalContext";
 
 export default function Third(): JSX.Element {
   const [processes, setProcesses] = useState<ProcessType[]>([]);
+  const [blockedProcesses, setBlockedProcesses] = useState<ProcessType[]>([]);
   const [runningProcesses, setRunningProcesses] = useState<ProcessType[]>([]);
   const [doneProcesses, setDoneProcesses] = useState<ProcessType[]>([]);
   const [isRunning, setIsRunning] = useState<boolean>(false);
@@ -50,6 +51,8 @@ export default function Third(): JSX.Element {
           doneProcesses,
           time,
           isRunning,
+          blockedProcesses,
+          setBlockedProcesses,
           setProcesses,
           setRunningProcesses,
           setDoneProcesses,
@@ -58,7 +61,12 @@ export default function Third(): JSX.Element {
         }}
       >
         <NavBar />
-        <div className="flex md:flex-row flex-col items-start p-2 justify-center w-8/12 gap-2 flex-1">
+        <div className="flex md:flex-row flex-col items-start p-2 justify-center w-4/5 gap-2 flex-1">
+        <ProcessList title="Procesos bloqueados">
+            {blockedProcesses.length > 0 ? blockedProcesses.map((process: ProcessType, index: number) => (
+              <Process {...process} key={index} isBlocked/>
+            )) : <NoValue title="No hay procesos bloqueados." description="No hay procesos actualmente bloqueados." />}
+          </ProcessList>
           <ProcessList title="Procesos en la cola">
             {processes.length > 0 ? processes.map((process: ProcessType, index: number) => (
               <Process {...process} key={index} />

@@ -14,6 +14,8 @@ import {
 import { useGlobalContext } from "../../provider/GlobalContext";
 import type { ProcessType } from "../../types/types";
 import { FaClock as Clock } from "react-icons/fa6";
+
+
 export default function Process({
   time,
   firstNumber,
@@ -25,42 +27,100 @@ export default function Process({
   isDone,
   isWaiting,
   isErrored,
+  isBlocked
 }: ProcessType): JSX.Element {
   const [passedTime, setPassedTime] = useState<number>(0);
-  const { setTime, setRunningProcesses, setDoneProcesses } = useGlobalContext();
+  const { setTime, setRunningProcesses, setDoneProcesses, setBlockedProcesses } = useGlobalContext();
 
   useEffect(() => {
-    if (isRunning){
-        const interval = setInterval(() => {
-            setPassedTime((prev: number) => prev + 1);
-            setTime((prev: number) => prev + 1);
-        }, 1e3);
-        if (passedTime >= time){
-            setRunningProcesses((prev: ProcessType[]) => prev.filter((process: ProcessType) => process.id !== id));
-            setDoneProcesses((prev: ProcessType[]) => [...prev, { time, firstNumber, secondNumber, id, operation,isRunning: false, isDone: true }]);
-        }
-        return () => clearInterval(interval);
+    if (isRunning) {
+      const interval = setInterval(() => {
+        setPassedTime((prev: number) => prev + 1);
+        setTime((prev: number) => prev + 1);
+      }, 1e3);
+      if (passedTime >= time) {
+        setRunningProcesses((prev: ProcessType[]) =>
+          prev.filter((process: ProcessType) => process.id !== id)
+        );
+        setDoneProcesses((prev: ProcessType[]) => [
+          ...prev,
+          {
+            time,
+            firstNumber,
+            secondNumber,
+            id,
+            operation,
+            isRunning: false,
+            isDone: true,
+            timeLeft: time - passedTime,
+          },
+        ]);
+      }
+      return () => clearInterval(interval);
     }
-  }, [isRunning, passedTime])
-
+  }, [isRunning, passedTime]);
 
   useEffect(() => {
-    window.addEventListener("keydown", (event: KeyboardEvent) => {
-        if (isRunning && event.key === "i"){
-            setRunningProcesses((prev: ProcessType[]) => {
-                const firstElemnt = prev.shift(); 
-                return firstElemnt ? [...prev, firstElemnt] : prev;
-            })
-        }
+    if (isBlocked){
+      const interval = setInterval(() => {
+        setRunningProcesses((prev: ProcessType[]) => [...prev, {
+          time,
+          firstNumber,
+          secondNumber,
+          id,
+          operation,
+          isRunning: true,
+          isBlocked: false,
+          timeLeft: time - passedTime
+        }])
+        setBlockedProcesses((prev: ProcessType[]) => prev.filter((process: ProcessType) => process.id !== id));
+      }, 6e3);
+      return () => clearInterval(interval);
+    }
 
-        if (isRunning && event.key === "e"){
-          setRunningProcesses((prev: ProcessType[]) => {
-            return prev.filter((prevProcess: ProcessType) => prevProcess.id !== id);
-          })
-          setDoneProcesses((prev: ProcessType[]) => [...prev, { time, firstNumber, secondNumber, id, operation, isRunning: false, isDone: false, isErrored: true }]);
-        }
-    })
-  })
+  }, []);
+
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "e" && isRunning) {
+        setRunningProcesses((prev: ProcessType[]) => prev.filter((process: ProcessType) => process.id !== id));
+        setDoneProcesses((prev: ProcessType[]) => [
+          ...prev,
+          {
+            time,
+            firstNumber,
+            secondNumber,
+            id,
+            operation,
+            isRunning: false,
+            isErrored: true,
+            timeLeft: time - passedTime,
+          },
+        ]);
+      }
+
+      if (event.key === "i" && isRunning){
+        setRunningProcesses((prev: ProcessType[]) => prev.filter((process: ProcessType) => process.id !== id));
+        setBlockedProcesses((prev: ProcessType[]) => [
+          ...prev,
+          {
+            time,
+            firstNumber,
+            secondNumber,
+            id,
+            operation,
+            isRunning: false,
+            timeLeft: time - passedTime,
+          },
+        ]);
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown); 
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown); 
+    }
+  });
   function getOperationSymbol(operation: number): string {
     switch (operation) {
       case 1:
@@ -83,15 +143,16 @@ export default function Process({
       transition={{ duration: 0.3, type: "spring" }}
     >
       <Card
-        data-isRunning={isRunning}
-        data-isDone={isDone}
-        data-isErrored={isErrored}
+        data-isrunning={isRunning}
+        data-isdone={isDone}
+        data-iserrored={isErrored}
+        data-isblocked={isBlocked}
         className="w-full h-auto bg-blue-400/20 border-1 border-dashed border-blue-400 data-[isRunning=true]:bg-green-500/20 data-[isRunning=true]:border-green-500
-      data-[isErrored=true]:bg-red-500/20 data-[isErrored=true]:border-red-500"
+      data-[isErrored=true]:bg-red-500/20 data-[isErrored=true]:border-red-500 data-[isBlocked=true]:bg-red-500/20 data-[isBlocked=true]:border-red-500"
       >
         <CardBody>
           <Progress
-            value={isDone ? 100: (passedTime / time) * 100}
+            value={(1 - (timeLeft - passedTime) / time) * 100}
             className="mb-2"
             classNames={{
               indicator:
@@ -105,20 +166,30 @@ export default function Process({
                 Ejecutándose.
               </Chip>
             )}
-            {(!isRunning && !isWaiting && !isDone) && (
+            {!isRunning && !isWaiting && !isDone && !isBlocked &&(
               <Chip color="primary" variant="flat">
                 Nuevo.
               </Chip>
             )}
             {isWaiting && (
-                <Chip color="warning" variant="flat">
-                    Listo.
-                </Chip>
+              <Chip color="warning" variant="flat">
+                Listo.
+              </Chip>
             )}
-            {isDone && (
-                <Chip color="success" variant="flat">
-                    Completado.
-                </Chip>
+            {(isDone && !isErrored) && (
+              <Chip color="success" variant="flat">
+                Completado.
+              </Chip>
+            )}
+            {isErrored && (
+              <Chip color="danger" variant="flat">
+                Error.
+              </Chip>
+            )}
+            {isBlocked && (
+              <Chip color="danger" variant="flat">
+                Bloqueado.
+              </Chip>
             )}
           </div>
           <h2 className="font-extrabold w-full text-center text-4xl">{`${firstNumber} ${getOperationSymbol(
@@ -136,13 +207,13 @@ export default function Process({
                 <p className="text-neutral-400">
                   Tiempo restante:
                   <span className="font-extrabold text-white">
-                    {" " + (timeLeft - passedTime)}
+                    {" " + (time - passedTime)}
                   </span>
                 </p>
                 <p className="text-neutral-400">
                   Tiempo transcurrido:
                   <span className="font-extrabold text-white">
-                    {" " + passedTime}
+                    {" " + timeLeft}
                   </span>
                 </p>
               </PopoverContent>
