@@ -15,10 +15,10 @@ export default function Third(): JSX.Element {
   const [time, setTime] = useState<number>(0);
 
   useEffect(() => {
-    if (isRunning && runningProcesses.length <= 4){
-      const [first, ...rest] = processes; 
-      if (first){
-      setRunningProcesses((prev: ProcessType[]) => [...prev, first]);
+    if (isRunning && runningProcesses.length <= 4) {
+      const [first, ...rest] = processes;
+      if (first) {
+        setRunningProcesses((prev: ProcessType[]) => [...prev, first]);
       }
 
       setProcesses(rest);
@@ -27,20 +27,19 @@ export default function Third(): JSX.Element {
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "p"){
-        setIsRunning(false); 
+      if (event.key === "p") {
+        setIsRunning(false);
       }
-      if (event.key === "c"){
+      if (event.key === "c") {
         setIsRunning(true);
       }
-    }; 
+    };
     window.addEventListener("keydown", handleKeyDown);
 
     return () => {
       window.removeEventListener("keydown", handleKeyDown);
     };
   });
-
 
   return (
     <main className="dark w-full min-h-screen flex justify-center items-center flex-col bg-background text-foreground font-inter">
@@ -62,27 +61,63 @@ export default function Third(): JSX.Element {
       >
         <NavBar />
         <div className="flex md:flex-row flex-col items-start p-2 justify-center w-4/5 gap-2 flex-1">
-        <ProcessList title="Procesos bloqueados">
-            {blockedProcesses.length > 0 ? blockedProcesses.map((process: ProcessType, index: number) => (
-              <Process {...process} key={index} isBlocked/>
-            )) : <NoValue title="No hay procesos bloqueados." description="No hay procesos actualmente bloqueados." />}
+          <ProcessList title="Procesos bloqueados">
+            {blockedProcesses.length > 0 ? (
+              blockedProcesses.map((process: ProcessType, index: number) => (
+                <Process {...process} key={index} isBlocked />
+              ))
+            ) : (
+              <NoValue
+                title="No hay procesos bloqueados."
+                description="No hay procesos actualmente bloqueados."
+              />
+            )}
           </ProcessList>
           <ProcessList title="Procesos en la cola">
-            {processes.length > 0 ? processes.map((process: ProcessType, index: number) => (
-              <Process {...process} key={index} />
-            )) : <NoValue title="No hay procesos." description="Empieza agregando uno desde agregar proceso." />}
+            {processes.length > 0 ? (
+              processes.map((process: ProcessType, index: number) => (
+                <Process {...process} key={index} />
+              ))
+            ) : (
+              <NoValue
+                title="No hay procesos."
+                description="Empieza agregando uno desde agregar proceso."
+              />
+            )}
           </ProcessList>
           <ProcessList title="Procesos en ejecución">
-            {runningProcesses.length > 0 ? runningProcesses.map((process: ProcessType, index: number) => (
-              <Process {...process} key={process.id} isRunning={index === 0 && isRunning} isWaiting={index !== 0 && isRunning} />
-            )) : <NoValue title="No hay procesos en ejecución." description="No hay procesos actualmente corriendo." />}
+            {runningProcesses.length > 0 ? (
+              runningProcesses.map((process: ProcessType, index: number) => (
+                <Process
+                  startTime={time}
+                  key={process.id}
+                  isRunning={index === 0 && isRunning}
+                  isWaiting={index !== 0 && isRunning}
+                  responseTime={(isRunning && index === 0) ? time : undefined}
+                  {...process}
+                />
+              ))
+            ) : (
+              <NoValue
+                title="No hay procesos en ejecución."
+                description="No hay procesos actualmente corriendo."
+              />
+            )}
           </ProcessList>
           <ProcessList title="Procesos terminados">
             {doneProcesses.length > 0 ? (
               doneProcesses.map((process: ProcessType) => (
-                <Process {...process} key={process.id} isDone />
+                <Process {...process} key={process.id} isDone
+                endTime={time}
+                returnTime={process.startTime ? time - process.startTime : undefined}
+                />
               ))
-            ) : <NoValue title="No hay procesos terminados." description="No hay procesos terminados actualmente." />}
+            ) : (
+              <NoValue
+                title="No hay procesos terminados."
+                description="No hay procesos terminados actualmente."
+              />
+            )}
           </ProcessList>
         </div>
       </GlobalContext.Provider>

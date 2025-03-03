@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { motion } from "framer-motion";
 import {
   Card,
@@ -27,10 +27,17 @@ export default function Process({
   isDone,
   isWaiting,
   isErrored,
-  isBlocked
+  isBlocked,
+  startTime, 
+  responseTime, 
+  endTime,
+  returnTime
 }: ProcessType): JSX.Element {
   const [passedTime, setPassedTime] = useState<number>(time - timeLeft);
   const { setTime, setRunningProcesses, setDoneProcesses, setBlockedProcesses } = useGlobalContext();
+  const startStaticTime = useRef<number | undefined>(startTime);
+  const responseStaticTime = useRef<number | undefined>(responseTime); 
+  const endStaticTime = useRef<number | undefined>(endTime);
 
   useEffect(() => {
     if (isRunning) {
@@ -53,6 +60,7 @@ export default function Process({
             isRunning: false,
             isDone: true,
             timeLeft: time - passedTime,
+            startTime: startStaticTime.current,
           },
         ]);
       }
@@ -131,6 +139,8 @@ export default function Process({
         return "*";
       case 4:
         return "/";
+      case 5: 
+        return "%";
       default:
         return "?";
     }
@@ -146,6 +156,8 @@ export default function Process({
         return firstNumber * secondNumber;
       case 4:
         return firstNumber / secondNumber;
+      case 5:
+        return firstNumber % secondNumber;
       default:
         return 0;
     }
@@ -209,7 +221,7 @@ export default function Process({
           </div>
           <h2 className="font-extrabold w-full text-center text-4xl">{`${firstNumber} ${getOperationSymbol(
             operation
-          )} ${secondNumber}`} {isDone && !isErrored && (" = " + getResult(operation, firstNumber, secondNumber))}</h2>
+          )} ${secondNumber}`} {isDone && !isErrored && (" = " + (getResult(operation, firstNumber, secondNumber)))}</h2>
           <div className="flex items-center justify-between">
             <p className="font-semibold">Tiempo total: {time}</p>
             <Popover showArrow className="dark">
@@ -226,11 +238,44 @@ export default function Process({
                   </span>
                 </p>
                 <p className="text-neutral-400">
-                  Tiempo transcurrido:
+                  Tiempo de servicio:
                   <span className="font-extrabold text-white">
-                    {" " + timeLeft}
+                    {" " + (passedTime)}
                   </span>
                 </p>
+                {startTime && (
+                  <p className="text-neutral-400">
+                    Tiempo de inicio: 
+                  <span className="font-extrabold text-white">
+                    {" " + startStaticTime.current}
+                  </span>
+                  </p>
+                )}
+                {responseTime && (
+                  <p className="text-neutral-400">
+                    Tiempo de respuesta: 
+                  <span className="font-extrabold text-white">
+                    {" " + responseStaticTime.current}
+                  </span>
+                  </p>
+                )}
+                {endTime && (
+                  <p className="text-neutral-400">
+                    Tiempo de finalización:
+                    <span className="font-extrabold text-white">
+                       {" " + endStaticTime.current}
+                    </span>
+
+                  </p>
+                )}
+                {returnTime && (
+                  <p className="text-neutral-400">
+                    Tiempo de retorno: 
+                  <span className="font-extrabold text-white">
+                    {" " + returnTime}
+                  </span>
+                  </p>
+                )}
               </PopoverContent>
             </Popover>
           </div>

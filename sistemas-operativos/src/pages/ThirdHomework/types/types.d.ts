@@ -10,4 +10,8 @@ export type ProcessType = {
     timeLeft?: number; 
     isWaiting?: boolean;
     isBlocked?: boolean;
+    startTime?: number; 
+    endTime?: number; 
+    responseTime?: number; 
+    returnTime?: number; 
 }
