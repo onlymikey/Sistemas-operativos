@@ -31,21 +31,24 @@ export default function NavBar(): JSX.Element {
     const newProcesses = Array.from(
       { length: processCount },
       (_, index: number) => ({
-        id: index,
+        id: index + 1,
         firstNumber: Math.floor(Math.random() * 100),
         secondNumber: Math.floor(Math.random() * 100) + 1,
         operation: Math.floor(Math.random() * 4) + 1,
-        time: Math.floor(Math.random() * 20) + 6,
+        time: Math.floor(Math.random() * 15) + 6,
       })
     );
     setProcesses((prev: ProcessType[]) => [...prev, ...newProcesses]);
+    setIsOpen(false);
   }
   return (
     <Navbar isBordered isBlurred>
       <NavbarContent justify="start">
         <NavbarItem>
           <Button variant="flat" color="secondary"
-          onPress={handleStart}>
+          onPress={handleStart}
+          isDisabled={processCount < 1}
+          >
             Iniciar
           </Button>
         </NavbarItem>
