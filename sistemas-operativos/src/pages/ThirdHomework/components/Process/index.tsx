@@ -136,6 +136,21 @@ export default function Process({
     }
   }
 
+  function getResult(operation: number, firstNumber: number, secondNumber: number): number {
+    switch (operation) {
+      case 1:
+        return firstNumber + secondNumber;
+      case 2:
+        return firstNumber - secondNumber;
+      case 3:
+        return firstNumber * secondNumber;
+      case 4:
+        return firstNumber / secondNumber;
+      default:
+        return 0;
+    }
+  }
+
   return (
     <motion.div
       initial={{ opacity: 0, scale: 0.5 }}
@@ -194,7 +209,7 @@ export default function Process({
           </div>
           <h2 className="font-extrabold w-full text-center text-4xl">{`${firstNumber} ${getOperationSymbol(
             operation
-          )} ${secondNumber}`}</h2>
+          )} ${secondNumber}`} {isDone && !isErrored && (" = " + getResult(operation, firstNumber, secondNumber))}</h2>
           <div className="flex items-center justify-between">
             <p className="font-semibold">Tiempo total: {time}</p>
             <Popover showArrow className="dark">
