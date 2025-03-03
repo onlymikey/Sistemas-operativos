@@ -1,79 +1,96 @@
-import { Navbar, NavbarContent, NavbarItem, Switch, Button, Popover, PopoverContent, 
-    PopoverTrigger, Form, Input 
+import {
+  Navbar,
+  NavbarContent,
+  NavbarItem,
+  Button,
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+  Input,
 } from "@heroui/react";
 import NumberFlow from "@number-flow/react";
-import { useTheme } from "@heroui/use-theme";
-import { FaPlay as Play, FaCloudMoon as Moon, FaPlus as Plus} from "react-icons/fa";
-import { CiSun as Sun } from "react-icons/ci";
-import { FormEvent } from "react";
-import { DataProvider } from "../../providers/DataProvider";
-import { useContext, useState } from "react";
-import type { ProcesType } from "../..";
+import { type ChangeEvent, useState } from "react";
+import { useGlobalContext } from "../../provider/GlobalContext";
+import type { ProcessType } from "../../types/types";
 
-export default function NavBar({time}: {time: number}): JSX.Element{
-    const {theme, setTheme}: {theme: string, setTheme: (value: string) => void} = useTheme();
-    const [isOpen, setIsOpen] = useState<boolean>(false);
-    const {data, setData, setIsRunning} = useContext(DataProvider);
-    const [value, setValue] = useState<number>(1);
+export default function NavBar(): JSX.Element {
+  const [processCount, setProcessCount] = useState<number>(0);
+  const [isOpen, setIsOpen] = useState<boolean>(false);
+  const { setProcesses, time, setIsRunning } = useGlobalContext();
 
+  function handleProcessCountChange(event: ChangeEvent<HTMLInputElement>) {
+    const value: number = parseInt(event.target.value);
+    setProcessCount(isNaN(value) ? 0 : value);
+  }
 
-    const handleSumbit = (event: FormEvent<HTMLFormElement>): void => {
-        event.preventDefault();
-        const temporalData: Record<string, any>[] = Array.from({length: value}, (_, index) => (
-            {
-                firstNumber: Math.floor(Math.random() * 100), 
-                secondNumber: Math.floor(Math.random() * 100) + 1,
-                operation: Math.floor(Math.random() * 5) + 1,
-                time: Math.floor(Math.random() * 14) + 6,
-                id: index + 1
-            }
-        ));
-        setData((prev: ProcesType[]) => [...prev, ...temporalData]);
-        setIsOpen(false);
-    }
+  function handleStart(): void {
+    setIsRunning((prev: boolean) => !prev);
+  }
 
-    return (
-        <Navbar isBordered  position="sticky">
-            <NavbarContent justify="start">
-                <NavbarItem>
-                    <Button startContent={<Play />} variant='flat' color='secondary' isDisabled={data.length === 0}
-                    onPress={() => setIsRunning((prev: boolean) => !prev)}>
-                        Iniciar
-                    </Button>
-                </NavbarItem>
-                <NavbarItem>
-                <Switch startContent={<Moon />} endContent={<Sun />} size="lg" className="hidden md:block"
-                     onChange={() => setTheme(theme === "dark" ? "light" : "dark")}
-                     isSelected={theme === "dark"} aria-label="Cambiar el tema de la aplicación" />
-                </NavbarItem>
-            </NavbarContent>
-            <NavbarContent justify="center">
-                <NavbarItem>
-                    <Popover showArrow backdrop="opaque" isOpen={isOpen} onOpenChange={setIsOpen}>
-                        <PopoverTrigger>
-                            <Button variant="flat" color="primary" startContent={<Plus />}>
-                                Nuevo proceso. 
-                            </Button>
-                        </PopoverTrigger>
-                    <PopoverContent className="w-72">
-                        <Form className="my-2 w-full" validationBehavior="native" onSubmit={handleSumbit} >
-                            <Input label="Numero de procesos." placeholder="Cantidad de procesos." name="quantity" type="number" 
-                            onValueChange={(currentValue: string) => setValue(parseInt(currentValue))}
-                            isInvalid={value <= 0}
-                            errorMessage="La cantidad de procesos debe ser mayor que cero."
-                            isRequired variant="bordered"/>
-                            <Button type="submit" variant="flat" color="primary" className='w-full'>Crear nuevo proceso</Button>
-                        </Form>
-                    </PopoverContent>
-                    </Popover>
-                </NavbarItem>
-            </NavbarContent>
-            <NavbarContent justify="end">
-                <NavbarItem className="w-32">
-                    <NumberFlow value={time} className="font-extrabold text-4xl mb-0"/>
-                    <p className='text-neutral-400 text-tiny mb-2'>segundos</p>
-                </NavbarItem>
-            </NavbarContent>
-        </Navbar>
-    )
+  function addProcesses(): void {
+    const newProcesses = Array.from(
+      { length: processCount },
+      (_, index: number) => ({
+        id: index,
+        firstNumber: Math.floor(Math.random() * 100),
+        secondNumber: Math.floor(Math.random() * 100) + 1,
+        operation: Math.floor(Math.random() * 4) + 1,
+        time: Math.floor(Math.random() * 20) + 6,
+      })
+    );
+    setProcesses((prev: ProcessType[]) => [...prev, ...newProcesses]);
+  }
+  return (
+    <Navbar isBordered isBlurred>
+      <NavbarContent justify="start">
+        <NavbarItem>
+          <Button variant="flat" color="secondary"
+          onPress={handleStart}>
+            Iniciar
+          </Button>
+        </NavbarItem>
+      </NavbarContent>
+      <NavbarContent justify="center">
+        <NavbarItem>
+          <Popover
+            className="dark"
+            showArrow
+            isOpen={isOpen}
+            onOpenChange={setIsOpen}
+            backdrop="opaque"
+          >
+            <PopoverTrigger>
+              <Button variant="flat" color="primary">
+                Agregar proceso
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="gap-2 p-2">
+              <Input
+                placeholder="Cantidad de procesos"
+                label="N de procesos."
+                onChange={handleProcessCountChange}
+                value={processCount.toString()}
+                isInvalid={processCount < 0}
+                isRequired
+              />
+              <Button
+                variant="flat"
+                color="primary"
+                className="w-full"
+                onPress={addProcesses}
+              >
+                Agregar procesos
+              </Button>
+            </PopoverContent>
+          </Popover>
+        </NavbarItem>
+      </NavbarContent>
+      <NavbarContent justify="end">
+        <NavbarItem className="flex flex-col items-center">
+          <NumberFlow value={time} className="text-4xl font-extrabold" />
+          <p className="text-neutral-400 text-tiny -mt-3">segundos</p>
+        </NavbarItem>
+      </NavbarContent>
+    </Navbar>
+  );
 }
