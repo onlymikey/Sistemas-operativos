@@ -8,8 +8,6 @@ type GlobalContextType = {
     doneProcesses: ProcessType[];
     time: number; 
     isRunning: boolean;
-    blockedProcesses: ProcessType[];
-    setBlockedProcesses: Dispatch<SetStateAction<ProcessType[]>>;
     setProcesses: Dispatch<SetStateAction<ProcessType[]>>;
     setRunningProcesses: Dispatch<SetStateAction<ProcessType[]>>;
     setDoneProcesses: Dispatch<SetStateAction<ProcessType[]>>;

@@ -18,7 +18,7 @@ export default function AboutHomework({
   urlTo: string;
 }): JSX.Element {
   return (
-    <main className="dark w-full  bg-[url('./primero.png')] bg-center bg-cover min-h-screen bg-background text-foreground font-inter flex items-center flex-col justify-start">
+    <main className="dark w-full bg-center bg-cover min-h-screen bg-background text-foreground font-inter flex items-center flex-col justify-start">
       <div className="w-full md:w-3/4 my-4 flex items-center flex-row space-x-3 md:space-x-10 justify-start p-2">
       <Button  as={Link} to="/" isIconOnly variant="flat" color="primary">
             <Back />

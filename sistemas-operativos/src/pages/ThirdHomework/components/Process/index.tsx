@@ -34,13 +34,17 @@ export default function Process({
   returnTime
 }: ProcessType): JSX.Element {
   const [passedTime, setPassedTime] = useState<number>(time - timeLeft);
-  const { setTime, setRunningProcesses, setDoneProcesses, setBlockedProcesses } = useGlobalContext();
+  const [staticResponseTime, setStaticResponseTime] = useState<number | undefined>(responseTime); 
+  const { setTime, setRunningProcesses, setDoneProcesses, time: currentTime } = useGlobalContext();
   const startStaticTime = useRef<number | undefined>(startTime);
-  const responseStaticTime = useRef<number | undefined>(responseTime); 
   const endStaticTime = useRef<number | undefined>(endTime);
+  const staticTime = useRef<number>(currentTime);
 
   useEffect(() => {
     if (isRunning) {
+      if (!staticResponseTime){
+        setStaticResponseTime(staticTime.current); 
+      }
       const interval = setInterval(() => {
         setPassedTime((prev: number) => prev + 1);
         setTime((prev: number) => prev + 1);
@@ -61,32 +65,13 @@ export default function Process({
             isDone: true,
             timeLeft: time - passedTime,
             startTime: startStaticTime.current,
+            responseTime: staticResponseTime, 
           },
         ]);
       }
       return () => clearInterval(interval);
     }
   }, [isRunning, passedTime]);
-
-  useEffect(() => {
-    if (isBlocked){
-      const interval = setInterval(() => {
-        setRunningProcesses((prev: ProcessType[]) => [...prev, {
-          time,
-          firstNumber,
-          secondNumber,
-          id,
-          operation,
-          isRunning: true,
-          isBlocked: false,
-          timeLeft: time - passedTime
-        }])
-        setBlockedProcesses((prev: ProcessType[]) => prev.filter((process: ProcessType) => process.id !== id));
-      }, 6e3);
-      return () => clearInterval(interval);
-    }
-
-  }, []);
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -109,18 +94,6 @@ export default function Process({
 
       if (event.key === "i" && isRunning){
         setRunningProcesses((prev: ProcessType[]) => prev.filter((process: ProcessType) => process.id !== id));
-        setBlockedProcesses((prev: ProcessType[]) => [
-          ...prev,
-          {
-            time,
-            firstNumber,
-            secondNumber,
-            id,
-            operation,
-            isRunning: false,
-            timeLeft: time - passedTime,
-          },
-        ]);
       }
     };
 
@@ -248,14 +221,6 @@ export default function Process({
                     Tiempo de inicio: 
                   <span className="font-extrabold text-white">
                     {" " + startStaticTime.current}
-                  </span>
-                  </p>
-                )}
-                {responseTime && (
-                  <p className="text-neutral-400">
-                    Tiempo de respuesta: 
-                  <span className="font-extrabold text-white">
-                    {" " + responseStaticTime.current}
                   </span>
                   </p>
                 )}
