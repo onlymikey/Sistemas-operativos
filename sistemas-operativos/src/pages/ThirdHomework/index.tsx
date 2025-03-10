@@ -74,7 +74,7 @@ export default function Third(): JSX.Element {
             )}
           </ProcessList>
           <ProcessList title="Procesos en ejecución">
-            {runningProcesses.length > 0 ? (
+            {(runningProcesses.length > 0 || blockedProcesses.length > 0) ? (
               <>
             {runningProcesses.map((process: ProcessType, index: number) => (
                 <Process
