@@ -34,7 +34,7 @@ export default function Process({
 }: ProcessType): JSX.Element {
   const [passedTime, setPassedTime] = useState<number>(time - timeLeft);
   const [staticResponseTime, setStaticResponseTime] = useState<number | undefined>(responseTime); 
-  const { setTime, setRunningProcesses, setDoneProcesses, time: currentTime, setBlockedProcesses } = useGlobalContext();
+  const { setTime, setRunningProcesses, setDoneProcesses, time: currentTime, setBlockedProcesses, isRunning: globalRunning, runningProcesses } = useGlobalContext();
   const [timeResponse, setTimeResponse] = useState<number | undefined>(responseTime); 
   const [blockedTime, setBlockedTime] = useState<number>(6); 
   const startStaticTime = useRef<number | undefined>(startTime);
@@ -125,9 +125,12 @@ export default function Process({
   });
 
   useEffect(() => {
-    if (isBlocked){
+    if (isBlocked && globalRunning){
       const interval = setInterval(() => {
         setBlockedTime((prev: number) => prev - 1);
+        if (runningProcesses.length === 0){
+          setTime((prev: number) => prev + 1);
+        }
       }, 1e3)
 
       if (blockedTime <= 0){
