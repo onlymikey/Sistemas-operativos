@@ -1,7 +1,7 @@
 import NavBar from "./components/NavBar";
 import ProcessList from "./components/ProcessList";
 import NoValue from "../SecondHomework/components/NoValues";
-import { useState, useEffect, Key } from "react";
+import { useState, useEffect } from "react";
 import type { ProcessType } from "./types/types";
 import Process from "./components/Process";
 import { GlobalContext } from "./provider/GlobalContext";
@@ -10,11 +10,12 @@ export default function Third(): JSX.Element {
   const [processes, setProcesses] = useState<ProcessType[]>([]);
   const [runningProcesses, setRunningProcesses] = useState<ProcessType[]>([]);
   const [doneProcesses, setDoneProcesses] = useState<ProcessType[]>([]);
+  const [blockedProcesses, setBlockedProcesses] = useState<ProcessType[]>([]);
   const [isRunning, setIsRunning] = useState<boolean>(false);
   const [time, setTime] = useState<number>(0);
 
   useEffect(() => {
-    if (isRunning && runningProcesses.length <= 4) {
+    if (isRunning && (runningProcesses.length + blockedProcesses.length) <= 4) {
       const [first, ...rest] = processes;
       if (first) {
         setRunningProcesses((prev: ProcessType[]) => [...prev, first]);
@@ -41,7 +42,7 @@ export default function Third(): JSX.Element {
   });
 
   return (
-    <main className="dark w-full min-h-screen flex justify-center items-center flex-col bg-background text-foreground font-inter">
+    <main className="bg-[url('https://www.heroui.pro/_next/image?url=%2Fimages%2Fhero-gradient2.webp&w=1920&q=75')] bg-contain bg-repeat bg-center dark w-full min-h-screen flex justify-center items-center flex-col bg-background text-foreground font-inter">
       <GlobalContext.Provider
         value={{
           processes,
@@ -49,6 +50,8 @@ export default function Third(): JSX.Element {
           doneProcesses,
           time,
           isRunning,
+          blockedProcesses,
+          setBlockedProcesses,
           setProcesses,
           setRunningProcesses,
           setDoneProcesses,
@@ -72,7 +75,8 @@ export default function Third(): JSX.Element {
           </ProcessList>
           <ProcessList title="Procesos en ejecución">
             {runningProcesses.length > 0 ? (
-              runningProcesses.map((process: ProcessType, index: number) => (
+              <>
+            {runningProcesses.map((process: ProcessType, index: number) => (
                 <Process
                   startTime={time}
                   key={process.id}
@@ -80,7 +84,17 @@ export default function Third(): JSX.Element {
                   isWaiting={index !== 0 && isRunning}
                   {...process}
                 />
-              ))
+              ))}
+              {
+                blockedProcesses.map((process: ProcessType) => (
+                  <Process
+                    key={process.id}
+                    isBlocked
+                    {...process}
+                  />
+                ))
+              }
+              </>
             ) : (
               <NoValue
                 title="No hay procesos en ejecución."

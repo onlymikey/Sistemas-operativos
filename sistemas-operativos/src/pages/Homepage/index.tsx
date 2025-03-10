@@ -16,6 +16,9 @@ export default function HomePage(): JSX.Element{
           <Homework title="Interacción de procesos." imageUrl="./segundo.png" urlTo="/about/second">
             Simulacion de procesos de un sistema operativo, con la oportunidad de interacturar con los procesos, pausar, reunudar, eliminar procesos y agregar nuevos procesos mendiante la entreada del teclado.
           </Homework>
+          <Homework title="First Come First Served" imageUrl="./tercero.png" urlTo="/about/third">
+            Simulación de procesos de un sistema operativo, con la oportunidad de interactuar con los procesos, pausar, reanudar, y bloquear procesos con el teclado. 
+          </Homework>
         </section>
       </main>
     )

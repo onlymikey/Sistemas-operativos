@@ -31,17 +31,21 @@ export default function Process({
   startTime, 
   responseTime, 
   endTime,
-  returnTime
 }: ProcessType): JSX.Element {
   const [passedTime, setPassedTime] = useState<number>(time - timeLeft);
   const [staticResponseTime, setStaticResponseTime] = useState<number | undefined>(responseTime); 
-  const { setTime, setRunningProcesses, setDoneProcesses, time: currentTime } = useGlobalContext();
+  const { setTime, setRunningProcesses, setDoneProcesses, time: currentTime, setBlockedProcesses } = useGlobalContext();
+  const [timeResponse, setTimeResponse] = useState<number | undefined>(responseTime); 
+  const [blockedTime, setBlockedTime] = useState<number>(6); 
   const startStaticTime = useRef<number | undefined>(startTime);
-  const endStaticTime = useRef<number | undefined>(endTime);
+  const endStaticTime = useRef<number | undefined>(endTime); 
   const staticTime = useRef<number>(currentTime);
 
   useEffect(() => {
     if (isRunning) {
+      if (!timeResponse){
+        setTimeResponse(() => (currentTime + 1) - 1); 
+      }
       if (!staticResponseTime){
         setStaticResponseTime(staticTime.current); 
       }
@@ -65,7 +69,7 @@ export default function Process({
             isDone: true,
             timeLeft: time - passedTime,
             startTime: startStaticTime.current,
-            responseTime: staticResponseTime, 
+            responseTime: timeResponse,
           },
         ]);
       }
@@ -88,12 +92,29 @@ export default function Process({
             isRunning: false,
             isErrored: true,
             timeLeft: time - passedTime,
+            startTime: startStaticTime.current,
+            responseTime: timeResponse,
           },
         ]);
       }
 
       if (event.key === "i" && isRunning){
         setRunningProcesses((prev: ProcessType[]) => prev.filter((process: ProcessType) => process.id !== id));
+        setBlockedProcesses((prev: ProcessType[]) => [
+          ...prev,
+          {
+            time,
+            firstNumber,
+            secondNumber,
+            id,
+            operation,
+            isRunning: false,
+            isBlocked: true,
+            timeLeft: time - passedTime,
+            startTime: startStaticTime.current,
+            responseTime: timeResponse,
+          },
+        ]);
       }
     };
 
@@ -102,6 +123,33 @@ export default function Process({
       window.removeEventListener("keydown", handleKeyDown); 
     }
   });
+
+  useEffect(() => {
+    if (isBlocked){
+      const interval = setInterval(() => {
+        setBlockedTime((prev: number) => prev - 1);
+      }, 1e3)
+
+      if (blockedTime <= 0){
+        setBlockedProcesses((prev: ProcessType[]) => prev.filter((process: ProcessType) => process.id !== id));
+        setRunningProcesses((prev: ProcessType[]) => [
+          ...prev,
+          {
+            time,
+            firstNumber,
+            secondNumber,
+            id,
+            operation,
+            timeLeft: time - passedTime,
+            startTime: startStaticTime.current,
+            responseTime: timeResponse,
+          },
+        ])
+      }
+      return () => clearInterval(interval);
+    }
+  }, [blockedTime, isBlocked]); 
+
   function getOperationSymbol(operation: number): string {
     switch (operation) {
       case 1:
@@ -152,7 +200,7 @@ export default function Process({
       >
         <CardBody>
           <Progress
-            value={(1 - (timeLeft - passedTime) / time) * 100}
+            value={(passedTime / time) * 100}
             className="mb-2"
             classNames={{
               indicator:
@@ -216,34 +264,37 @@ export default function Process({
                     {" " + (passedTime)}
                   </span>
                 </p>
-                {startTime && (
-                  <p className="text-neutral-400">
-                    Tiempo de inicio: 
+                {(startTime !== undefined) && (
+                <p className="text-neutral-400">
+                  Tiempo de  de llegada: 
                   <span className="font-extrabold text-white">
                     {" " + startStaticTime.current}
                   </span>
-                  </p>
+                </p>
                 )}
+
                 {endTime && (
                   <p className="text-neutral-400">
-                    Tiempo de finalización:
+                    Tiempo de finalizacion: 
                     <span className="font-extrabold text-white">
-                       {" " + endStaticTime.current}
+                      {" " + endStaticTime.current}
                     </span>
-
                   </p>
                 )}
-                {returnTime && (
+                {(timeResponse !== undefined ) && (
                   <p className="text-neutral-400">
-                    Tiempo de retorno: 
-                  <span className="font-extrabold text-white">
-                    {" " + returnTime}
-                  </span>
+                    Tiempo de respuesta: 
+                    <span className="text-white font-extrabold">
+                      {" " + (timeResponse)}
+                    </span>
                   </p>
                 )}
               </PopoverContent>
             </Popover>
           </div>
+          {isBlocked && <div className="w-full flex items-center justify-start">
+                <p className="text-red-400">Tiempo de bloqueo restante: {blockedTime}</p>
+            </div>}
         </CardBody>
       </Card>
     </motion.div>
