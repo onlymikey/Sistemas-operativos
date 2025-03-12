@@ -72,6 +72,7 @@ export default function Third(): JSX.Element {
       >
         <NavBar />
         <div className="flex md:flex-row flex-col items-start p-2 justify-center w-4/5 gap-2 flex-1">
+          <div className="flex flex-col gap-2 w-full">
           <ProcessList title="Procesos nuevos">
             {
               <div className="flex flex-col items-center justify-center gap-2 overflow-y-hidden">
@@ -100,15 +101,26 @@ export default function Third(): JSX.Element {
               </>
             )}
           </ProcessList>
+
+          </div>
           <div className="w-full flex flex-col items-center justify-center gap-3">
-          <ProcessList title="Procesos en ejecución">
+          <ProcessList title="Procesos en memoria." className="border-1 border-white/50">
+            {runningProcesses.length > 0 ? (
+            <>
             {runningProcesses.map((process: ProcessType, index: number) =>  (
-              index === 0 && <Process key={process.id} {...process} />
+              <Process key={process.id} {...process} status={index === 0 ? "Ejecutando" : "Listo"} />
             ))}
+            </> ) : <NoValue title="No hay procesos en memoria." description="No hay procesos en memoria actualmente." />}
+          <ProcessList title="Procesos en bloqueados." className="border-red-500 bg-red-500/20 border-1 border-dashed">
+            {blockedProcesses.length > 0 ? (
+            <>
+            {blockedProcesses.map((processes: ProcessType) => (
+              <Process key={processes.id} {...processes}  />
+            ))}
+            </> ) : <NoValue title="No hay procesos bloqueados." description="No hay procesos bloqueados actualmente." />}
           </ProcessList>
-          <ProcessList title="Procesos listos">
-            {}
           </ProcessList>
+
           </div>
           <ProcessList title="Procesos terminados">
             {doneProcesses.length > 0 ? (
