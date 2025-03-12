@@ -36,6 +36,7 @@ export default function NavBar(): JSX.Element {
         secondNumber: Math.floor(Math.random() * 100) + 1,
         operation: Math.floor(Math.random() * 4) + 1,
         time: Math.floor(Math.random() * 15) + 6,
+        status: "Nuevo" as "Nuevo",
       })
     );
     setProcesses((prev: ProcessType[]) => [...prev, ...newProcesses]);
