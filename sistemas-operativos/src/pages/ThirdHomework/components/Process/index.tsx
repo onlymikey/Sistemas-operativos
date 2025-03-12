@@ -270,6 +270,14 @@ export default function Process({
                     </span>
                   </p>
                 )}
+                {(status === "Terminado" || status === "Error") && (
+                  <p className="text-neutral-400">
+                    Tiempo de retorno:
+                    <span className="text-white font-extrabold">
+                      {" " + ((endStaticTime.current ?? 0) - (startStaticTime.current ?? 0))}
+                    </span>
+                  </p>
+                )}
               </PopoverContent>
             </Popover>
           </div>
