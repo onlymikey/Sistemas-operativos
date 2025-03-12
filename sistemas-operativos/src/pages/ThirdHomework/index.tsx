@@ -8,6 +8,7 @@ import { GlobalContext } from "./provider/GlobalContext";
 import NumberFlow from "@number-flow/react";
 import { Switch, Divider } from "@heroui/react";
 
+
 export default function Third(): JSX.Element {
   const [processes, setProcesses] = useState<ProcessType[]>([]);
   const [runningProcesses, setRunningProcesses] = useState<ProcessType[]>([]);
@@ -81,7 +82,7 @@ export default function Third(): JSX.Element {
                 <p className="text-neutral-400 text-small -mt-4">
                   Numero de procesos esperando.
                 </p>
-                <Switch
+                {false && ( <><Switch
                   aria-label="Mostrar / ocultar elementos de la lista de procesos nuevos."
                   size="lg"
                   isSelected={!showNewProcess}
@@ -89,7 +90,7 @@ export default function Third(): JSX.Element {
                 />
                 <p className="text-tiny text-neutral-400">
                   Ocultar procesos nuevos
-                </p>
+                </p> </>)}
                 <Divider />
               </div>
             }
@@ -99,28 +100,16 @@ export default function Third(): JSX.Element {
               </>
             )}
           </ProcessList>
-          <ProcessList title="Proceso en ejecución">
-            {runningProcesses.length > 0 || blockedProcesses.length > 0 ? (
-              <>
-                {runningProcesses.map((process: ProcessType, index: number) => (
-                  <Process
-                    startTime={time}
-                    key={process.id}
-                    {...process}
-                    status={index === 0 && isRunning ? "Ejecutando" : "Listo"}
-                  />
-                ))}
-                {blockedProcesses.map((process: ProcessType) => (
-                  <Process key={process.id} {...process} status="Bloqueado" />
-                ))}
-              </>
-            ) : (
-              <NoValue
-                title="No hay procesos en ejecución."
-                description="No hay procesos actualmente corriendo."
-              />
-            )}
+          <div className="w-full flex flex-col items-center justify-center gap-3">
+          <ProcessList title="Procesos en ejecución">
+            {runningProcesses.map((process: ProcessType, index: number) =>  (
+              index === 0 && <Process key={process.id} {...process} />
+            ))}
           </ProcessList>
+          <ProcessList title="Procesos listos">
+            {}
+          </ProcessList>
+          </div>
           <ProcessList title="Procesos terminados">
             {doneProcesses.length > 0 ? (
               doneProcesses.map((process: ProcessType) => (
@@ -128,9 +117,6 @@ export default function Third(): JSX.Element {
                   {...process}
                   key={process.id}
                   endTime={time}
-                  returnTime={
-                    process.startTime ? time - process.startTime : undefined
-                  }
                 />
               ))
             ) : (

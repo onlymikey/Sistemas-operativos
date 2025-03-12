@@ -27,20 +27,22 @@ export default function Process({
   startTime, 
   responseTime, 
   endTime,
+  waitTime
 }: ProcessType): JSX.Element {
   const [passedTime, setPassedTime] = useState<number>(time - timeLeft);
   const [staticResponseTime, setStaticResponseTime] = useState<number | undefined>(responseTime); 
   const { setTime, setRunningProcesses, setDoneProcesses, time: currentTime, setBlockedProcesses, isRunning: globalRunning, runningProcesses } = useGlobalContext();
   const [timeResponse, setTimeResponse] = useState<number | undefined>(responseTime); 
   const [blockedTime, setBlockedTime] = useState<number>(6); 
+  const [waitedTime, setWaitedTime] = useState<number>(waitTime ?? 0);
   const startStaticTime = useRef<number | undefined>(startTime);
   const endStaticTime = useRef<number | undefined>(endTime); 
   const staticTime = useRef<number>(currentTime);
 
   useEffect(() => {
     if (status === "Ejecutando") {
-      if (!timeResponse){
-        setTimeResponse(() => (currentTime + 1) - 1); 
+      if (timeResponse === undefined){
+        setTimeResponse(() => (currentTime + 1) - 1);
       }
       if (!staticResponseTime){
         setStaticResponseTime(staticTime.current); 
@@ -65,12 +67,23 @@ export default function Process({
             timeLeft: time - passedTime,
             startTime: startStaticTime.current,
             responseTime: timeResponse,
+            waitTime: waitedTime,
           },
         ]);
       }
       return () => clearInterval(interval);
     }
+    
   }, [status, passedTime]);
+
+  useEffect(() => {
+    if (status === "Listo" && globalRunning){
+      const interval = setInterval(() => {
+        setWaitedTime((prev: number) => prev + 1);
+      }, 1e3);
+      return () => clearInterval(interval);
+    }
+  },  [waitedTime, status])
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -88,6 +101,7 @@ export default function Process({
             timeLeft: time - passedTime,
             startTime: startStaticTime.current,
             responseTime: timeResponse,
+            waitTime: waitedTime,
           },
         ]);
       }
@@ -106,6 +120,7 @@ export default function Process({
             timeLeft: time - passedTime,
             startTime: startStaticTime.current,
             responseTime: timeResponse,
+            waitTime: waitedTime,
           },
         ]);
       }
@@ -140,6 +155,7 @@ export default function Process({
             timeLeft: time - passedTime,
             startTime: startStaticTime.current,
             responseTime: timeResponse,
+            waitTime: waitedTime,
           },
         ])
       }
@@ -229,8 +245,8 @@ export default function Process({
             <p className="font-semibold">Tiempo total: {time}</p>
             <Popover showArrow className="dark">
               <PopoverTrigger>
-                <Button isIconOnly variant="flat" className="bg-transparent">
-                  <Clock className="text-xl" />
+                <Button variant="flat" color="secondary" startContent={<Clock />}>
+                  Ver tiempos.
                 </Button>
               </PopoverTrigger>
               <PopoverContent>
@@ -279,6 +295,14 @@ export default function Process({
                     </span>
                   </p>
                 )}
+                {
+                  <p className="text-neutral-400">
+                    Tiempo de espera: 
+                    <span className="text-white font-extrabold">
+                      {" " + (waitedTime)}
+                    </span>
+                  </p>
+                }
               </PopoverContent>
             </Popover>
           </div>

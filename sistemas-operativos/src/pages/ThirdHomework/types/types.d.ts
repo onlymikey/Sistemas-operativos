@@ -10,4 +10,5 @@ export type ProcessType = {
     endTime?: number; 
     responseTime?: number; 
     returnTime?: number; 
+    waitTime?: number;
 }
