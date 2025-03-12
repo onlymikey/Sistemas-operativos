@@ -216,6 +216,7 @@ export default function Process({
               indicator:
                 "bg-gradient-to-r from-blue-600 via-purple-600 to-red-500",
             }}
+            aria-label="Progreso del proceso."
           />
           <div className="flex items-center justify-between">
             <p className="font-semibold">Proceso: {id}</p>
