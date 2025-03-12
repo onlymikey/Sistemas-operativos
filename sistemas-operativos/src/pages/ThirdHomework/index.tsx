@@ -64,7 +64,7 @@ export default function Third(): JSX.Element {
           <ProcessList title="Procesos en la cola">
             {processes.length > 0 ? (
               processes.map((process: ProcessType, index: number) => (
-                <Process {...process} key={index} />
+                <Process {...process} key={index} status="Nuevo" />
               ))
             ) : (
               <NoValue
@@ -80,17 +80,16 @@ export default function Third(): JSX.Element {
                 <Process
                   startTime={time}
                   key={process.id}
-                  isRunning={index === 0 && isRunning}
-                  isWaiting={index !== 0 && isRunning}
                   {...process}
+                  status={index === 0 && isRunning ? "Ejecutando" : "Listo"}
                 />
               ))}
               {
                 blockedProcesses.map((process: ProcessType) => (
                   <Process
                     key={process.id}
-                    isBlocked
                     {...process}
+                    status="Bloqueado"
                   />
                 ))
               }
@@ -105,7 +104,7 @@ export default function Third(): JSX.Element {
           <ProcessList title="Procesos terminados">
             {doneProcesses.length > 0 ? (
               doneProcesses.map((process: ProcessType) => (
-                <Process {...process} key={process.id} isDone
+                <Process {...process} key={process.id} status="Terminado"
                 endTime={time}
                 returnTime={process.startTime ? time - process.startTime : undefined}
                 />

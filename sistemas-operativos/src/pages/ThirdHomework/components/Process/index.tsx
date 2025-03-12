@@ -22,12 +22,8 @@ export default function Process({
   secondNumber,
   id,
   operation,
-  isRunning,
+  status,
   timeLeft = time,
-  isDone,
-  isWaiting,
-  isErrored,
-  isBlocked,
   startTime, 
   responseTime, 
   endTime,
@@ -42,7 +38,7 @@ export default function Process({
   const staticTime = useRef<number>(currentTime);
 
   useEffect(() => {
-    if (isRunning) {
+    if (status === "Ejecutando") {
       if (!timeResponse){
         setTimeResponse(() => (currentTime + 1) - 1); 
       }
@@ -65,8 +61,7 @@ export default function Process({
             secondNumber,
             id,
             operation,
-            isRunning: false,
-            isDone: true,
+            status: "Terminado",
             timeLeft: time - passedTime,
             startTime: startStaticTime.current,
             responseTime: timeResponse,
@@ -75,11 +70,11 @@ export default function Process({
       }
       return () => clearInterval(interval);
     }
-  }, [isRunning, passedTime]);
+  }, [status, passedTime]);
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "e" && isRunning) {
+      if (event.key === "e" && status === "Ejecutando") {
         setRunningProcesses((prev: ProcessType[]) => prev.filter((process: ProcessType) => process.id !== id));
         setDoneProcesses((prev: ProcessType[]) => [
           ...prev,
@@ -89,8 +84,7 @@ export default function Process({
             secondNumber,
             id,
             operation,
-            isRunning: false,
-            isErrored: true,
+            status: "Error",
             timeLeft: time - passedTime,
             startTime: startStaticTime.current,
             responseTime: timeResponse,
@@ -98,7 +92,7 @@ export default function Process({
         ]);
       }
 
-      if (event.key === "i" && isRunning){
+      if (event.key === "i" && status === "Ejecutando"){
         setRunningProcesses((prev: ProcessType[]) => prev.filter((process: ProcessType) => process.id !== id));
         setBlockedProcesses((prev: ProcessType[]) => [
           ...prev,
@@ -108,8 +102,7 @@ export default function Process({
             secondNumber,
             id,
             operation,
-            isRunning: false,
-            isBlocked: true,
+            status: "Bloqueado",
             timeLeft: time - passedTime,
             startTime: startStaticTime.current,
             responseTime: timeResponse,
@@ -125,7 +118,7 @@ export default function Process({
   });
 
   useEffect(() => {
-    if (isBlocked && globalRunning){
+    if (status === "Bloqueado" && globalRunning){
       const interval = setInterval(() => {
         setBlockedTime((prev: number) => prev - 1);
         if (runningProcesses.length === 0){
@@ -143,6 +136,7 @@ export default function Process({
             secondNumber,
             id,
             operation,
+            status: "Listo",
             timeLeft: time - passedTime,
             startTime: startStaticTime.current,
             responseTime: timeResponse,
@@ -151,7 +145,7 @@ export default function Process({
       }
       return () => clearInterval(interval);
     }
-  }, [blockedTime, isBlocked]); 
+  }, [blockedTime, status]); 
 
   function getOperationSymbol(operation: number): string {
     switch (operation) {
@@ -187,6 +181,22 @@ export default function Process({
     }
   }
 
+
+  function getColor(): "primary" | "success" | "danger" | "warning"  {
+    switch(status){
+      case "Ejecutando":
+        return "success";
+      case "Bloqueado":
+        return "danger";
+      case "Listo": 
+        return "warning";
+      case "Error":
+        return "danger";
+      default:
+        return "primary";
+    }
+  }
+
   return (
     <motion.div
       initial={{ opacity: 0, scale: 0.5 }}
@@ -194,12 +204,9 @@ export default function Process({
       transition={{ duration: 0.3, type: "spring" }}
     >
       <Card
-        data-isrunning={isRunning}
-        data-isdone={isDone}
-        data-iserrored={isErrored}
-        data-isblocked={isBlocked}
-        className="w-full h-auto bg-blue-400/20 border-1 border-dashed border-blue-400 data-[isRunning=true]:bg-green-500/20 data-[isRunning=true]:border-green-500
-      data-[isErrored=true]:bg-red-500/20 data-[isErrored=true]:border-red-500 data-[isBlocked=true]:bg-red-500/20 data-[isBlocked=true]:border-red-500"
+        data-status={status}
+        className="w-full h-auto bg-blue-400/20 border-1 border-dashed border-blue-400 data-[status='Ejecutando']:bg-green-500/20 data-[status='Ejecutando']:border-green-500
+      data-[status='Error']:bg-red-500/20 data-[status='Error']:border-red-500 data-[status='Bloqueado']:bg-red-500/20 data-[status='Bloqueado']:border-red-500"
       >
         <CardBody>
           <Progress
@@ -212,40 +219,11 @@ export default function Process({
           />
           <div className="flex items-center justify-between">
             <p className="font-semibold">Proceso: {id}</p>
-            {isRunning && (
-              <Chip color="success" variant="flat">
-                Ejecutándose.
-              </Chip>
-            )}
-            {!isRunning && !isWaiting && !isDone && !isBlocked &&(
-              <Chip color="primary" variant="flat">
-                Nuevo.
-              </Chip>
-            )}
-            {isWaiting && (
-              <Chip color="warning" variant="flat">
-                Listo.
-              </Chip>
-            )}
-            {(isDone && !isErrored) && (
-              <Chip color="success" variant="flat">
-                Completado.
-              </Chip>
-            )}
-            {isErrored && (
-              <Chip color="danger" variant="flat">
-                Error.
-              </Chip>
-            )}
-            {isBlocked && (
-              <Chip color="danger" variant="flat">
-                Bloqueado.
-              </Chip>
-            )}
+            {<Chip variant="flat" color={getColor()}>{status}</Chip>}
           </div>
           <h2 className="font-extrabold w-full text-center text-4xl">{`${firstNumber} ${getOperationSymbol(
             operation
-          )} ${secondNumber}`} {isDone && !isErrored && (" = " + (getResult(operation, firstNumber, secondNumber)))}</h2>
+          )} ${secondNumber}`} {status === "Terminado" && (" = " + (getResult(operation, firstNumber, secondNumber)))}</h2>
           <div className="flex items-center justify-between">
             <p className="font-semibold">Tiempo total: {time}</p>
             <Popover showArrow className="dark">
@@ -295,7 +273,7 @@ export default function Process({
               </PopoverContent>
             </Popover>
           </div>
-          {isBlocked && <div className="w-full flex items-center justify-start">
+          {status === "Bloqueado" && <div className="w-full flex items-center justify-start">
                 <p className="text-red-400">Tiempo de bloqueo restante: {blockedTime}</p>
             </div>}
         </CardBody>

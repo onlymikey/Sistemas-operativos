@@ -4,12 +4,8 @@ export type ProcessType = {
     secondNumber: number;
     operation: number; 
     time: number; 
-    isRunning?: boolean; 
-    isDone?: boolean; 
-    isErrored?: boolean;
     timeLeft?: number; 
-    isWaiting?: boolean;
-    isBlocked?: boolean;
+    status: "Nuevo" | "Listo" | "Ejecutando" | "Terminado" | "Error" | "Bloqueado"; 
     startTime?: number; 
     endTime?: number; 
     responseTime?: number; 
