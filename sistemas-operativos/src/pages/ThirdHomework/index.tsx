@@ -108,7 +108,10 @@ export default function Third(): JSX.Element {
             {runningProcesses.length > 0 ? (
             <>
             {runningProcesses.map((process: ProcessType, index: number) =>  (
-              <Process key={process.id} {...process} status={index === 0 ? "Ejecutando" : "Listo"} />
+              <Process key={process.id} {...process} status={(index === 0 && isRunning) ? "Ejecutando" : "Listo"} 
+              
+              startTime={time}
+              />
             ))}
             </> ) : <NoValue title="No hay procesos en memoria." description="No hay procesos en memoria actualmente." />}
           <ProcessList title="Procesos en bloqueados." className="border-red-500 bg-red-500/20 border-1 border-dashed">
