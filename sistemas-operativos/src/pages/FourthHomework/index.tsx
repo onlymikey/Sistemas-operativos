@@ -66,11 +66,6 @@ export default function Third(): JSX.Element {
       if (event.key === "c") {
         setIsRunning(true);
       }
-
-      if (event.key === "b"){
-        setIsRunning(false);
-        onOpen();
-      }
     };
     window.addEventListener("keydown", handleKeyDown);
 
@@ -93,6 +88,7 @@ export default function Third(): JSX.Element {
           time,
           isRunning,
           blockedProcesses,
+          onOpen,
           setBlockedProcesses,
           setProcesses,
           setRunningProcesses,
@@ -154,7 +150,7 @@ export default function Third(): JSX.Element {
                         status={
                           index === 0 && isRunning ? "Ejecutando" : "Listo"
                         }
-                        startTime={time}
+                        startTime={process.startTime ?? time}
                       />
                     )
                   )}
@@ -197,12 +193,12 @@ export default function Third(): JSX.Element {
             )}
           </ProcessList>
         </div>
-        <Modal isOpen={isOpen} onClose={onOpenChange} className="dark" size="5xl">
+        <Modal isOpen={isOpen} onClose={onOpenChange} className="dark" size="full">
           <ModalContent>
             {(onClose: () => void) => (
               <>
               <ModalHeader className="text-2xl font-extrabold text-white">Bloque de control de procesos.</ModalHeader>
-              <ModalBody>
+              <ModalBody className="overflow-y-auto">
                 <Table className="dark text-white">
                   <TableHeader columns={columns}>
                     {item => <TableColumn key={item.key}>{item.title}</TableColumn>}

@@ -41,6 +41,8 @@ export default function Process({
     isRunning: globalRunning,
     runningProcesses,
     setProcesses,
+    setIsRunning,
+    onOpen,
   } = useGlobalContext();
   const [timeResponse, setTimeResponse] = useState<number | undefined>(
     responseTime
@@ -164,6 +166,7 @@ export default function Process({
                 return process;
               })
             })
+            onOpen();
         }
       }
     };

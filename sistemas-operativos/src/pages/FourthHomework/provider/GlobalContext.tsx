@@ -10,6 +10,7 @@ type GlobalContextType = {
     isRunning: boolean;
     blockedProcesses: ProcessType[];
     setBlockedProcesses: Dispatch<SetStateAction<ProcessType[]>>;  
+    onOpen: () => void; 
     setProcesses: Dispatch<SetStateAction<ProcessType[]>>;
     setRunningProcesses: Dispatch<SetStateAction<ProcessType[]>>;
     setDoneProcesses: Dispatch<SetStateAction<ProcessType[]>>;
