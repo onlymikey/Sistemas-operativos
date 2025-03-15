@@ -83,7 +83,7 @@ export default function Third(): JSX.Element {
                 <p className="text-neutral-400 text-small -mt-4">
                   Numero de procesos esperando.
                 </p>
-                {false && ( <><Switch
+                {true && ( <><Switch
                   aria-label="Mostrar / ocultar elementos de la lista de procesos nuevos."
                   size="lg"
                   isSelected={!showNewProcess}
