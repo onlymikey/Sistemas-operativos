@@ -15,7 +15,6 @@ import { useGlobalContext } from "../../provider/GlobalContext";
 import type { ProcessType } from "../../types/types";
 import { FaClock as Clock } from "react-icons/fa6";
 
-
 export default function Process({
   time,
   firstNumber,
@@ -24,28 +23,41 @@ export default function Process({
   operation,
   status,
   timeLeft = time,
-  startTime, 
-  responseTime, 
+  startTime,
+  responseTime,
   endTime,
-  waitTime
+  waitTime,
+  onSave = true,
 }: ProcessType): JSX.Element {
   const [passedTime, setPassedTime] = useState<number>(time - timeLeft);
-  const [staticResponseTime, setStaticResponseTime] = useState<number | undefined>(responseTime); 
-  const { setTime, setRunningProcesses, setDoneProcesses, time: currentTime, setBlockedProcesses, isRunning: globalRunning, runningProcesses } = useGlobalContext();
-  const [timeResponse, setTimeResponse] = useState<number | undefined>(responseTime); 
-  const [blockedTime, setBlockedTime] = useState<number>(6); 
+  const [staticResponseTime, setStaticResponseTime] = useState<
+    number | undefined
+  >(responseTime);
+  const {
+    setTime,
+    setRunningProcesses,
+    setDoneProcesses,
+    time: currentTime,
+    setBlockedProcesses,
+    isRunning: globalRunning,
+    runningProcesses,
+  } = useGlobalContext();
+  const [timeResponse, setTimeResponse] = useState<number | undefined>(
+    responseTime
+  );
+  const [blockedTime, setBlockedTime] = useState<number>(6);
   const [waitedTime, setWaitedTime] = useState<number>(waitTime ?? 0);
   const startStaticTime = useRef<number | undefined>(startTime);
-  const endStaticTime = useRef<number | undefined>(endTime); 
+  const endStaticTime = useRef<number | undefined>(endTime);
   const staticTime = useRef<number>(currentTime);
 
   useEffect(() => {
     if (status === "Ejecutando") {
-      if (timeResponse === undefined){
-        setTimeResponse(() => (currentTime + 1) - 1);
+      if (timeResponse === undefined) {
+        setTimeResponse(() => currentTime + 1 - 1);
       }
-      if (!staticResponseTime){
-        setStaticResponseTime(staticTime.current); 
+      if (!staticResponseTime) {
+        setStaticResponseTime(staticTime.current);
       }
       const interval = setInterval(() => {
         setPassedTime((prev: number) => prev + 1);
@@ -73,22 +85,46 @@ export default function Process({
       }
       return () => clearInterval(interval);
     }
-    
   }, [status, passedTime]);
 
   useEffect(() => {
-    if (status === "Listo" && globalRunning){
+    setRunningProcesses((prev: ProcessType[]) => {
+      return prev.map((process: ProcessType) => {
+        if (process.id === id) {
+          return {
+            ...process,
+            time,
+            firstNumber,
+            secondNumber,
+            id,
+            operation,
+            status,
+            timeLeft: time - passedTime,
+            startTime: startStaticTime.current,
+            responseTime: timeResponse,
+            waitTime: waitedTime,
+          };
+        }
+        return process;
+      });
+    });
+  }, [onSave]);
+
+  useEffect(() => {
+    if (status === "Listo" && globalRunning) {
       const interval = setInterval(() => {
         setWaitedTime((prev: number) => prev + 1);
       }, 1e3);
       return () => clearInterval(interval);
     }
-  },  [waitedTime, status])
+  }, [waitedTime, status]);
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === "e" && status === "Ejecutando") {
-        setRunningProcesses((prev: ProcessType[]) => prev.filter((process: ProcessType) => process.id !== id));
+        setRunningProcesses((prev: ProcessType[]) =>
+          prev.filter((process: ProcessType) => process.id !== id)
+        );
         setDoneProcesses((prev: ProcessType[]) => [
           ...prev,
           {
@@ -106,8 +142,10 @@ export default function Process({
         ]);
       }
 
-      if (event.key === "i" && status === "Ejecutando"){
-        setRunningProcesses((prev: ProcessType[]) => prev.filter((process: ProcessType) => process.id !== id));
+      if (event.key === "i" && status === "Ejecutando") {
+        setRunningProcesses((prev: ProcessType[]) =>
+          prev.filter((process: ProcessType) => process.id !== id)
+        );
         setBlockedProcesses((prev: ProcessType[]) => [
           ...prev,
           {
@@ -126,23 +164,25 @@ export default function Process({
       }
     };
 
-    window.addEventListener("keydown", handleKeyDown); 
+    window.addEventListener("keydown", handleKeyDown);
     return () => {
-      window.removeEventListener("keydown", handleKeyDown); 
-    }
+      window.removeEventListener("keydown", handleKeyDown);
+    };
   });
 
   useEffect(() => {
-    if (status === "Bloqueado" && globalRunning){
+    if (status === "Bloqueado" && globalRunning) {
       const interval = setInterval(() => {
         setBlockedTime((prev: number) => prev - 1);
-        if (runningProcesses.length === 0){
+        if (runningProcesses.length === 0) {
           setTime((prev: number) => prev + 1);
         }
-      }, 1e3)
+      }, 1e3);
 
-      if (blockedTime <= 0){
-        setBlockedProcesses((prev: ProcessType[]) => prev.filter((process: ProcessType) => process.id !== id));
+      if (blockedTime <= 0) {
+        setBlockedProcesses((prev: ProcessType[]) =>
+          prev.filter((process: ProcessType) => process.id !== id)
+        );
         setRunningProcesses((prev: ProcessType[]) => [
           ...prev,
           {
@@ -157,11 +197,11 @@ export default function Process({
             responseTime: timeResponse,
             waitTime: waitedTime,
           },
-        ])
+        ]);
       }
       return () => clearInterval(interval);
     }
-  }, [blockedTime, status]); 
+  }, [blockedTime, status]);
 
   function getOperationSymbol(operation: number): string {
     switch (operation) {
@@ -173,14 +213,18 @@ export default function Process({
         return "*";
       case 4:
         return "/";
-      case 5: 
+      case 5:
         return "%";
       default:
         return "?";
     }
   }
 
-  function getResult(operation: number, firstNumber: number, secondNumber: number): number {
+  function getResult(
+    operation: number,
+    firstNumber: number,
+    secondNumber: number
+  ): number {
     switch (operation) {
       case 1:
         return firstNumber + secondNumber;
@@ -197,14 +241,13 @@ export default function Process({
     }
   }
 
-
-  function getColor(): "primary" | "success" | "danger" | "warning"  {
-    switch(status){
+  function getColor(): "primary" | "success" | "danger" | "warning" {
+    switch (status) {
       case "Ejecutando":
         return "success";
       case "Bloqueado":
         return "danger";
-      case "Listo": 
+      case "Listo":
         return "warning";
       case "Error":
         return "danger";
@@ -236,16 +279,26 @@ export default function Process({
           />
           <div className="flex items-center justify-between">
             <p className="font-semibold">Proceso: {id}</p>
-            {<Chip variant="flat" color={getColor()}>{status}</Chip>}
+            {
+              <Chip variant="flat" color={getColor()}>
+                {status}
+              </Chip>
+            }
           </div>
-          <h2 className="font-extrabold w-full text-center text-4xl">{`${firstNumber} ${getOperationSymbol(
-            operation
-          )} ${secondNumber}`} {status === "Terminado" && (" = " + (getResult(operation, firstNumber, secondNumber)))}</h2>
+          <h2 className="font-extrabold w-full text-center text-4xl">
+            {`${firstNumber} ${getOperationSymbol(operation)} ${secondNumber}`}{" "}
+            {status === "Terminado" &&
+              " = " + getResult(operation, firstNumber, secondNumber)}
+          </h2>
           <div className="flex items-center justify-between">
             <p className="font-semibold">Tiempo total: {time}</p>
             <Popover showArrow className="dark">
               <PopoverTrigger>
-                <Button variant="flat" color="secondary" startContent={<Clock />}>
+                <Button
+                  variant="flat"
+                  color="secondary"
+                  startContent={<Clock />}
+                >
                   Ver tiempos.
                 </Button>
               </PopoverTrigger>
@@ -259,31 +312,31 @@ export default function Process({
                 <p className="text-neutral-400">
                   Tiempo de servicio:
                   <span className="font-extrabold text-white">
-                    {" " + (passedTime)}
+                    {" " + passedTime}
                   </span>
                 </p>
-                {(startTime !== undefined) && (
-                <p className="text-neutral-400">
-                  Tiempo de  de llegada: 
-                  <span className="font-extrabold text-white">
-                    {" " + startStaticTime.current}
-                  </span>
-                </p>
+                {startTime !== undefined && (
+                  <p className="text-neutral-400">
+                    Tiempo de de llegada:
+                    <span className="font-extrabold text-white">
+                      {" " + startStaticTime.current}
+                    </span>
+                  </p>
                 )}
 
                 {endTime && (
                   <p className="text-neutral-400">
-                    Tiempo de finalizacion: 
+                    Tiempo de finalizacion:
                     <span className="font-extrabold text-white">
                       {" " + endStaticTime.current}
                     </span>
                   </p>
                 )}
-                {(timeResponse !== undefined ) && (
+                {timeResponse !== undefined && (
                   <p className="text-neutral-400">
-                    Tiempo de respuesta: 
+                    Tiempo de respuesta:
                     <span className="text-white font-extrabold">
-                      {" " + (timeResponse)}
+                      {" " + timeResponse}
                     </span>
                   </p>
                 )}
@@ -291,24 +344,30 @@ export default function Process({
                   <p className="text-neutral-400">
                     Tiempo de retorno:
                     <span className="text-white font-extrabold">
-                      {" " + ((endStaticTime.current ?? 0) - (startStaticTime.current ?? 0))}
+                      {" " +
+                        ((endStaticTime.current ?? 0) -
+                          (startStaticTime.current ?? 0))}
                     </span>
                   </p>
                 )}
                 {
                   <p className="text-neutral-400">
-                    Tiempo de espera: 
+                    Tiempo de espera:
                     <span className="text-white font-extrabold">
-                      {" " + (waitedTime)}
+                      {" " + waitedTime}
                     </span>
                   </p>
                 }
               </PopoverContent>
             </Popover>
           </div>
-          {status === "Bloqueado" && <div className="w-full flex items-center justify-start">
-                <p className="text-red-400">Tiempo de bloqueo restante: {blockedTime}</p>
-            </div>}
+          {status === "Bloqueado" && (
+            <div className="w-full flex items-center justify-start">
+              <p className="text-red-400">
+                Tiempo de bloqueo restante: {blockedTime}
+              </p>
+            </div>
+          )}
         </CardBody>
       </Card>
     </motion.div>

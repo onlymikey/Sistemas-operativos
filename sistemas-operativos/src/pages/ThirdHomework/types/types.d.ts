@@ -11,4 +11,5 @@ export type ProcessType = {
     responseTime?: number; 
     returnTime?: number; 
     waitTime?: number;
+    onSave?: boolean; 
 }

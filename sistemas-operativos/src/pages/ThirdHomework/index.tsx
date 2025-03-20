@@ -17,6 +17,7 @@ export default function Third(): JSX.Element {
   const [isRunning, setIsRunning] = useState<boolean>(false);
   const [time, setTime] = useState<number>(0);
   const [showNewProcess, setShowNewProcess] = useState<boolean>(false);
+  const [save, setSave] = useState<boolean>(false);
 
   useEffect(() => {
     if (isRunning && runningProcesses.length + blockedProcesses.length <= 4) {
@@ -39,6 +40,11 @@ export default function Third(): JSX.Element {
       }
       if (event.key === "c") {
         setIsRunning(true);
+      }
+      if (event.key === "s") {
+        setSave((prev: boolean) => !prev);
+        console.log("Procesos guardados con exito"); 
+        console.log(runningProcesses);
       }
     };
     window.addEventListener("keydown", handleKeyDown);
@@ -110,7 +116,7 @@ export default function Third(): JSX.Element {
             {runningProcesses.map((process: ProcessType, index: number) =>  (
               <Process key={process.id} {...process} status={(index === 0 && isRunning) ? "Ejecutando" : "Listo"} 
               
-              startTime={time}
+              startTime={time} onSave={save}
               />
             ))}
             </> ) : <NoValue title="No hay procesos en memoria." description="No hay procesos en memoria actualmente." />}
