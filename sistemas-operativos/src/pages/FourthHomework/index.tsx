@@ -1,7 +1,7 @@
 import NavBar from "./components/NavBar";
 import ProcessList from "./components/ProcessList";
 import NoValue from "../SecondHomework/components/NoValues";
-import { useState, useEffect } from "react";
+import { useState, useEffect, type Key, type ReactNode } from "react";
 import type { ProcessType } from "./types/types";
 import Process from "./components/Process";
 import { GlobalContext } from "./provider/GlobalContext";
@@ -19,9 +19,12 @@ import {
   TableCell,
   TableColumn,
   TableHeader,
+  Chip,
   useDisclosure,
   getKeyValue,
 } from "@heroui/react";
+import { getColor } from "./utils";
+
 
 export default function Fourth(): JSX.Element {
   const [processes, setProcesses] = useState<ProcessType[]>([]);
@@ -44,7 +47,7 @@ export default function Fourth(): JSX.Element {
     {key: "responseTime", title: "Tiempo de respuesta"},
     {key: "returnTime", title: "Tiempo de retorno"},
     {key: "waitTime", title: "Tiempo de espera"},
-    {key: "time", title: "Tiempo de ejecucion/servicio."},
+    {key: "time", title: "Tiempo total de ejecución."},
   ]
 
   function generateProcess(): void {
@@ -59,6 +62,22 @@ export default function Fourth(): JSX.Element {
       status: "Nuevo" as "Nuevo",
     };
     setProcesses((prev: ProcessType[]) => [...prev, newProcess]);
+  }
+
+
+
+
+  function renderCell(item: ProcessType, columnKey: Key): ReactNode {
+    const value: string | number = getKeyValue(item, columnKey as string); 
+    switch(columnKey){
+      case "id": 
+        return <Chip variant="flat" color="primary">{value}</Chip>
+      case "status": 
+        return <Chip variant="flat" color={getColor(value as string)}>{value}</Chip>
+      default: 
+        return value ?? "No aplica."; 
+    }
+
   }
   useEffect(() => {
     if (isRunning && runningProcesses.length + blockedProcesses.length <= 4) {
@@ -81,6 +100,9 @@ export default function Fourth(): JSX.Element {
       }
       if (event.key === "c") {
         setIsRunning(true);
+        if (isOpen){
+          onOpenChange();
+        }
       }
       if (event.key === "b") {
         setSave(true);
@@ -247,17 +269,17 @@ export default function Fourth(): JSX.Element {
               {(onClose: () => void) => (
                 <>
                 <ModalHeader className="font-extrabold text-2xl">Bloque de control de procesos.</ModalHeader>
-                <ModalBody>
+                <ModalBody className="overflow-y-auto">
                     <Table isStriped className="border-gray-700 border-1 rounded-xl">
                         <TableHeader columns={columns}>
                             {column => <TableColumn key={column.key}>{column.title}</TableColumn>}
                         </TableHeader>
-                        <TableBody items={[...processes, ...runningProcesses, ...doneProcesses, ...blockedProcesses]}>
+                        <TableBody items={[processes, runningProcesses, doneProcesses, blockedProcesses].flat()}>
                           {item => (
                             <TableRow key={item.id}>
                               {columnKey => (
                                 <TableCell key={columnKey}>
-                                  {getKeyValue(item, columnKey)}
+                                  {renderCell(item, columnKey)}
                                 </TableCell>
                               )}
                             </TableRow>
