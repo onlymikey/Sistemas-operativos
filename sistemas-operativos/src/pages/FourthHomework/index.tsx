@@ -25,7 +25,6 @@ import {
 } from "@heroui/react";
 import { getColor } from "./utils";
 
-
 export default function Fourth(): JSX.Element {
   const [processes, setProcesses] = useState<ProcessType[]>([]);
   const [runningProcesses, setRunningProcesses] = useState<ProcessType[]>([]);
@@ -34,21 +33,21 @@ export default function Fourth(): JSX.Element {
   const [isRunning, setIsRunning] = useState<boolean>(false);
   const [time, setTime] = useState<number>(0);
   const [showNewProcess, setShowNewProcess] = useState<boolean>(false);
-  const { isOpen, onOpen, onOpenChange} = useDisclosure();
+  const { isOpen, onOpen, onOpenChange } = useDisclosure();
   const [save, setSave] = useState<boolean>(false);
 
-  const columns: {key: string, title: string}[] = [
-    {key: "id", title: "ID"},
-    {key: "opeartion",title: "Operacion"},
-    {key: "result", title: "Resultado"},
-    {key: "status", title: "Estado"},
-    {key: "startTime", title: "Tiempo de inicio"},
-    {key: "endTime", title: "Tiempo de finalizacion"},
-    {key: "responseTime", title: "Tiempo de respuesta"},
-    {key: "returnTime", title: "Tiempo de retorno"},
-    {key: "waitTime", title: "Tiempo de espera"},
-    {key: "time", title: "Tiempo total de ejecución."},
-  ]
+  const columns: { key: string; title: string }[] = [
+    { key: "id", title: "ID" },
+    { key: "operation", title: "Operacion" },
+    { key: "result", title: "Resultado" },
+    { key: "status", title: "Estado" },
+    { key: "time", title: "Tiempo total de ejecución." },
+    { key: "startTime", title: "Tiempo de inicio" },
+    { key: "endTime", title: "Tiempo de finalizacion" },
+    { key: "responseTime", title: "Tiempo de respuesta" },
+    { key: "returnTime", title: "Tiempo de retorno" },
+    { key: "waitTime", title: "Tiempo de espera" },
+  ];
 
   function generateProcess(): void {
     const newProcess: ProcessType = {
@@ -64,20 +63,50 @@ export default function Fourth(): JSX.Element {
     setProcesses((prev: ProcessType[]) => [...prev, newProcess]);
   }
 
-
-
-
   function renderCell(item: ProcessType, columnKey: Key): ReactNode {
-    const value: string | number = getKeyValue(item, columnKey as string); 
-    switch(columnKey){
-      case "id": 
-        return <Chip variant="flat" color="primary">{value}</Chip>
-      case "status": 
-        return <Chip variant="flat" color={getColor(value as string)}>{value}</Chip>
-      default: 
-        return value ?? "No aplica."; 
-    }
+    const value: string | number = getKeyValue(item, columnKey as string);
+    const operations: string[] = ["+", "-", "*", "/"];
 
+    switch (columnKey) {
+      case "id":
+        return (
+          <Chip variant="flat" color="primary">
+            {value}
+          </Chip>
+        );
+      case "status":
+        return (
+          <Chip variant="flat" color={getColor(value as string)}>
+            {value}
+          </Chip>
+        );
+      case "operation":
+        return (
+          <span className="font-extrabold">
+            {item.firstNumber +
+              " " +
+              operations[item.operation - 1] +
+              " " +
+              item.secondNumber}
+          </span>
+        );
+      case "result":
+        return item.status === "Terminado" ? (
+          <Chip variant="flat" color="primary">
+            {eval(
+              item.firstNumber +
+                " " +
+                operations[item.operation - 1] +
+                " " +
+                item.secondNumber
+            )}
+          </Chip>
+        ) : (
+          "No aplica"
+        );
+      default:
+        return value ?? "No aplica.";
+    }
   }
   useEffect(() => {
     if (isRunning && runningProcesses.length + blockedProcesses.length <= 4) {
@@ -100,7 +129,7 @@ export default function Fourth(): JSX.Element {
       }
       if (event.key === "c") {
         setIsRunning(true);
-        if (isOpen){
+        if (isOpen) {
           onOpenChange();
         }
       }
@@ -196,6 +225,7 @@ export default function Fourth(): JSX.Element {
                         index === 0 && (
                           <Process
                             key={process.id}
+                            startTime={time}
                             {...process}
                             status={
                               index === 0 && isRunning ? "Ejecutando" : "Listo"
@@ -253,7 +283,7 @@ export default function Fourth(): JSX.Element {
           <ProcessList title="Procesos terminados">
             {doneProcesses.length > 0 ? (
               doneProcesses.map((process: ProcessType) => (
-                <Process {...process} key={process.id} endTime={time} />
+                <Process {...process} key={process.id} endTime={time} onSave={save} />
               ))
             ) : (
               <NoValue
@@ -264,37 +294,56 @@ export default function Fourth(): JSX.Element {
           </ProcessList>
         </div>
       </GlobalContext.Provider>
-      <Modal isOpen={isOpen} onOpenChange={onOpenChange} className="dark text-white" size="full">
-            <ModalContent>
-              {(onClose: () => void) => (
-                <>
-                <ModalHeader className="font-extrabold text-2xl">Bloque de control de procesos.</ModalHeader>
-                <ModalBody className="overflow-y-auto">
-                    <Table isStriped className="border-gray-700 border-1 rounded-xl">
-                        <TableHeader columns={columns}>
-                            {column => <TableColumn key={column.key}>{column.title}</TableColumn>}
-                        </TableHeader>
-                        <TableBody items={[processes, runningProcesses, doneProcesses, blockedProcesses].flat()}>
-                          {item => (
-                            <TableRow key={item.id}>
-                              {columnKey => (
-                                <TableCell key={columnKey}>
-                                  {renderCell(item, columnKey)}
-                                </TableCell>
-                              )}
-                            </TableRow>
-                          )}
-
-                        </TableBody>
-                    </Table>
-                </ModalBody>
-                <ModalFooter>
-                  <Button variant="flat" color="danger" onPress={onClose}>Cerrar</Button>
-                </ModalFooter>
-                </>
-                
-              )}
-            </ModalContent>
+      <Modal
+        isOpen={isOpen}
+        onOpenChange={onOpenChange}
+        className="dark text-white"
+        size="full"
+      >
+        <ModalContent>
+          {(onClose: () => void) => (
+            <>
+              <ModalHeader className="font-extrabold text-2xl">
+                Bloque de control de procesos.
+              </ModalHeader>
+              <ModalBody className="overflow-y-auto">
+                <Table
+                  isStriped
+                  className="border-gray-700 border-1 rounded-xl"
+                >
+                  <TableHeader columns={columns}>
+                    {(column) => (
+                      <TableColumn key={column.key}>{column.title}</TableColumn>
+                    )}
+                  </TableHeader>
+                  <TableBody
+                    items={[
+                      processes,
+                      runningProcesses,
+                      doneProcesses,
+                      blockedProcesses,
+                    ].flat()}
+                  >
+                    {(item) => (
+                      <TableRow key={item.id}>
+                        {(columnKey) => (
+                          <TableCell key={columnKey}>
+                            {renderCell(item, columnKey)}
+                          </TableCell>
+                        )}
+                      </TableRow>
+                    )}
+                  </TableBody>
+                </Table>
+              </ModalBody>
+              <ModalFooter>
+                <Button variant="flat" color="danger" onPress={onClose}>
+                  Cerrar
+                </Button>
+              </ModalFooter>
+            </>
+          )}
+        </ModalContent>
       </Modal>
     </main>
   );

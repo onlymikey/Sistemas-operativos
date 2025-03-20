@@ -49,7 +49,7 @@ export default function Process({
   const [waitedTime, setWaitedTime] = useState<number>((): number => {
     if (status === "Ejecutando"){
       if (waitTime !== undefined){
-        return waitTime === 0 ? 0 : waitTime + 2;
+        return waitTime === 0 ? 0 : waitTime + 1;
       }
       return 0; 
     }

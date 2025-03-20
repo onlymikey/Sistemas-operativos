@@ -55,11 +55,12 @@ export default function Process({
     }
     return waitTime ?? 0;
   });
-  const startStaticTime = useRef<number | undefined>(startTime);
+  const startStaticTime = useRef<number | undefined>(startTime ?? 0);
   const endStaticTime = useRef<number | undefined>(endTime);
   const staticTime = useRef<number>(currentTime);
   
   function save(): void {
+    if (status === "Ejecutando"){
     setRunningProcesses((prev: ProcessType[]) => {
       return prev.map((process: ProcessType) => {
         if (process.id === id) {
@@ -75,11 +76,36 @@ export default function Process({
             startTime: startStaticTime.current,
             responseTime: timeResponse,
             waitTime: waitedTime,
+            endTime: endStaticTime.current,
           };
         }
         return process;
       });
     });
+  }
+  if (status === "Terminado"){
+    setDoneProcesses((prev: ProcessType[]) => {
+      return prev.map((process: ProcessType) => {
+        if (process.id === id) {
+          return {
+            ...process,
+            time,
+            firstNumber,
+            secondNumber,
+            id,
+            operation,
+            status,
+            timeLeft: time - passedTime,
+            startTime: startStaticTime.current,
+            responseTime: timeResponse,
+            waitTime: waitedTime,
+            endTime: endStaticTime.current,
+          };
+        }
+        return process;
+      });
+    });
+  }
   }
 
   useEffect(() => {
