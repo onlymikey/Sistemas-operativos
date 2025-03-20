@@ -27,7 +27,7 @@ export default function Process({
   responseTime,
   endTime,
   waitTime,
-  onSave = true,
+  onSave = false,
 }: ProcessType): JSX.Element {
   const [passedTime, setPassedTime] = useState<number>(time - timeLeft);
   const [staticResponseTime, setStaticResponseTime] = useState<
@@ -46,10 +46,41 @@ export default function Process({
     responseTime
   );
   const [blockedTime, setBlockedTime] = useState<number>(6);
-  const [waitedTime, setWaitedTime] = useState<number>(waitTime ?? 0);
+  const [waitedTime, setWaitedTime] = useState<number>((): number => {
+    if (status === "Ejecutando"){
+      if (waitTime !== undefined){
+        return waitTime === 0 ? 0 : waitTime + 2;
+      }
+      return 0; 
+    }
+    return waitTime ?? 0;
+  });
   const startStaticTime = useRef<number | undefined>(startTime);
   const endStaticTime = useRef<number | undefined>(endTime);
   const staticTime = useRef<number>(currentTime);
+  
+  function save(): void {
+    setRunningProcesses((prev: ProcessType[]) => {
+      return prev.map((process: ProcessType) => {
+        if (process.id === id) {
+          return {
+            ...process,
+            time,
+            firstNumber,
+            secondNumber,
+            id,
+            operation,
+            status,
+            timeLeft: time - passedTime,
+            startTime: startStaticTime.current,
+            responseTime: timeResponse,
+            waitTime: waitedTime,
+          };
+        }
+        return process;
+      });
+    });
+  }
 
   useEffect(() => {
     if (status === "Ejecutando") {
@@ -88,32 +119,17 @@ export default function Process({
   }, [status, passedTime]);
 
   useEffect(() => {
-    setRunningProcesses((prev: ProcessType[]) => {
-      return prev.map((process: ProcessType) => {
-        if (process.id === id) {
-          return {
-            ...process,
-            time,
-            firstNumber,
-            secondNumber,
-            id,
-            operation,
-            status,
-            timeLeft: time - passedTime,
-            startTime: startStaticTime.current,
-            responseTime: timeResponse,
-            waitTime: waitedTime,
-          };
-        }
-        return process;
-      });
-    });
-  }, [onSave]);
+    if (onSave){
+      save(); 
+    }
+  }, [onSave])
+
 
   useEffect(() => {
     if (status === "Listo" && globalRunning) {
       const interval = setInterval(() => {
         setWaitedTime((prev: number) => prev + 1);
+        save(); 
       }, 1e3);
       return () => clearInterval(interval);
     }
@@ -354,7 +370,7 @@ export default function Process({
                   <p className="text-neutral-400">
                     Tiempo de espera:
                     <span className="text-white font-extrabold">
-                      {" " + waitedTime}
+                      {" " + (waitedTime)}
                     </span>
                   </p>
                 }
