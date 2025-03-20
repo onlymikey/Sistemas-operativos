@@ -60,7 +60,7 @@ export default function Process({
   const staticTime = useRef<number>(currentTime);
   
   function save(): void {
-    if (status === "Ejecutando"){
+    if (status === "Ejecutando" || status === "Listo"){
     setRunningProcesses((prev: ProcessType[]) => {
       return prev.map((process: ProcessType) => {
         if (process.id === id) {
@@ -83,7 +83,7 @@ export default function Process({
       });
     });
   }
-  if (status === "Terminado"){
+  if (status === "Terminado" || status === "Error"){
     setDoneProcesses((prev: ProcessType[]) => {
       return prev.map((process: ProcessType) => {
         if (process.id === id) {

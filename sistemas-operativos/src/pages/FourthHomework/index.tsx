@@ -42,11 +42,12 @@ export default function Fourth(): JSX.Element {
     { key: "result", title: "Resultado" },
     { key: "status", title: "Estado" },
     { key: "time", title: "Tiempo total de ejecución." },
-    { key: "startTime", title: "Tiempo de inicio" },
+    { key: "timeLeft", title: "Timepo faltante."},
+    { key: "startTime", title: "Tiempo de llegada." },
+    { key: "waitTime", title: "Tiempo de espera" },
     { key: "endTime", title: "Tiempo de finalizacion" },
     { key: "responseTime", title: "Tiempo de respuesta" },
     { key: "returnTime", title: "Tiempo de retorno" },
-    { key: "waitTime", title: "Tiempo de espera" },
   ];
 
   function generateProcess(): void {
@@ -104,8 +105,18 @@ export default function Fourth(): JSX.Element {
         ) : (
           "No aplica"
         );
+      case "timeLeft": 
+        return <span className="text-white font-extrabold">{item.time - (item.timeLeft ?? 0)}</span>
+      case "returnTime":
+        return item.status === "Terminado" ? (
+          <Chip variant="flat" color="primary">{item.endTime ?? 0 - (item.startTime ?? 0)}</Chip>
+        ) : (
+          <Chip variant="flat" color="danger">
+            No aplica.
+          </Chip>
+        );
       default:
-        return value ?? "No aplica.";
+        return value !== undefined ? <span className="font-extrabold text-white w-full text-center">{value}</span> : <Chip variant="flat" color="danger">No aplica.</Chip>;
     }
   }
   useEffect(() => {
@@ -283,7 +294,12 @@ export default function Fourth(): JSX.Element {
           <ProcessList title="Procesos terminados">
             {doneProcesses.length > 0 ? (
               doneProcesses.map((process: ProcessType) => (
-                <Process {...process} key={process.id} endTime={time} onSave={save} />
+                <Process
+                  {...process}
+                  key={process.id}
+                  endTime={time}
+                  onSave={save}
+                />
               ))
             ) : (
               <NoValue
