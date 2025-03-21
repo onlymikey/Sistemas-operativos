@@ -23,6 +23,9 @@ export default function HomePage(): JSX.Element{
             Simulacion del algoritmo de planificacion de procesos FCFS, con la capacidad de mostrar el bloque de control de procesos y ademas de agregar una nueva tecla que permite agregar procesos incluso durante la ejecucion del programa.
 
           </Homework>
+          <Homework title="Round Robin" imageUrl="./quinta.png" urlTo="/about/fifth">
+            Simulación de porocesos en un sistema operativo usando Round Robin con la capacidad de interactuar con los procesos, pausar, reanudar, continuar y mostrar el estado de los procesos usando una tabla de control de procesos.
+          </Homework>
         </section>
       </main>
     )
