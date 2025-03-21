@@ -5,6 +5,7 @@ export type ProcessType = {
     operation: number; 
     time: number; 
     timeLeft?: number; 
+    quantumTime?: number; 
     status: "Nuevo" | "Listo" | "Ejecutando" | "Terminado" | "Error" | "Bloqueado"; 
     startTime?: number; 
     endTime?: number; 

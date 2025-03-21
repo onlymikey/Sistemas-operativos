@@ -190,6 +190,7 @@ export default function Fifth(): JSX.Element {
                               index === 0 && isRunning ? "Ejecutando" : "Listo"
                             }
                             onSave={save}
+                            quantumTime={quantum}
                           />
                         )
                     )}
@@ -209,6 +210,7 @@ export default function Fifth(): JSX.Element {
                             }
                             startTime={time}
                             onSave={save}
+                            quantumTime={quantum}
                           />
                         )
                     )}

@@ -27,6 +27,7 @@ export default function Process({
   responseTime,
   endTime,
   waitTime,
+  quantumTime,
   onSave = false,
 }: ProcessType): JSX.Element {
   const [passedTime, setPassedTime] = useState<number>(time - timeLeft);
@@ -58,6 +59,7 @@ export default function Process({
   const startStaticTime = useRef<number | undefined>(startTime ?? 0);
   const endStaticTime = useRef<number | undefined>(endTime);
   const staticTime = useRef<number>(currentTime);
+  const [quantum, setQuantum] = useState<number | undefined>(quantumTime);
   
   function save(): void {
     if (status === "Ejecutando" || status === "Listo"){
@@ -119,7 +121,33 @@ export default function Process({
       const interval = setInterval(() => {
         setPassedTime((prev: number) => prev + 1);
         setTime((prev: number) => prev + 1);
+        setQuantum((prev: number | undefined) => {
+          if (prev !== undefined){
+            if (prev > 0){
+              return prev - 1;
+            }
+            return quantumTime; 
+          }
+          return prev;
+        })
       }, 1e3);
+      if (quantum !== undefined && quantum <= 0){
+        setRunningProcesses((prev: ProcessType[]) => {
+          const currentProcess: ProcessType = {
+            time,
+            firstNumber,
+            secondNumber,
+            id,
+            operation,
+            status: "Listo",
+            timeLeft: time - passedTime,
+            startTime: startStaticTime.current,
+            responseTime: timeResponse,
+            waitTime: waitedTime,
+          }
+          return [...prev.filter((process) =>  process.id !== id ), currentProcess]; 
+        }); 
+      }
       if (passedTime >= time) {
         setRunningProcesses((prev: ProcessType[]) =>
           prev.filter((process: ProcessType) => process.id !== id)
@@ -198,6 +226,7 @@ export default function Process({
             operation,
             status: "Bloqueado",
             timeLeft: time - passedTime,
+            quantumTime: quantum,
             startTime: startStaticTime.current,
             responseTime: timeResponse,
             waitTime: waitedTime,
@@ -409,7 +438,15 @@ export default function Process({
                 Tiempo de bloqueo restante: {blockedTime}
               </p>
             </div>
-          )}
+          )}{
+            quantum !== undefined && (
+              <p className="font-semibold">Tiempo restante del quantum: 
+              <span className="font-extrabold text-white">
+              {" " + quantum}
+              </span>
+                </p>
+            )
+          }
         </CardBody>
       </Card>
     </motion.div>
