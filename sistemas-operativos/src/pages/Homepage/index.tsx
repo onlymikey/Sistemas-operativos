@@ -19,6 +19,10 @@ export default function HomePage(): JSX.Element{
           <Homework title="First Come First Served" imageUrl="./tercero.png" urlTo="/about/third">
             Simulación de procesos de un sistema operativo, con la oportunidad de interactuar con los procesos, pausar, reanudar, y bloquear procesos con el teclado. 
           </Homework>
+          <Homework  title="First Come First Served p2." imageUrl="./cuarto.png" urlTo="/about/fourth">
+            Simulacion del algoritmo de planificacion de procesos FCFS, con la capacidad de mostrar el bloque de control de procesos y ademas de agregar una nueva tecla que permite agregar procesos incluso durante la ejecucion del programa.
+
+          </Homework>
         </section>
       </main>
     )
