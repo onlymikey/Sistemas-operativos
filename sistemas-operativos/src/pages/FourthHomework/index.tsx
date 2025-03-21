@@ -1,7 +1,7 @@
 import NavBar from "./components/NavBar";
 import ProcessList from "./components/ProcessList";
 import NoValue from "../SecondHomework/components/NoValues";
-import { useState, useEffect, type Key, type ReactNode } from "react";
+import { useState, useEffect } from "react";
 import type { ProcessType } from "./types/types";
 import Process from "./components/Process";
 import { GlobalContext } from "./provider/GlobalContext";
@@ -19,11 +19,9 @@ import {
   TableCell,
   TableColumn,
   TableHeader,
-  Chip,
   useDisclosure,
-  getKeyValue,
 } from "@heroui/react";
-import { getColor } from "./utils";
+import { renderCell } from "./utils";
 
 export default function Fourth(): JSX.Element {
   const [processes, setProcesses] = useState<ProcessType[]>([]);
@@ -41,12 +39,13 @@ export default function Fourth(): JSX.Element {
     { key: "operation", title: "Operacion" },
     { key: "result", title: "Resultado" },
     { key: "status", title: "Estado" },
-    { key: "time", title: "Tiempo total de ejecución." },
-    { key: "timeLeft", title: "Timepo faltante."},
+    { key: "time", title: "Tiempo máximo." },
+    { key: "passedTime",  title: "Timepo servicio/ejecución."},
+    { key: "timeLeft", title: "Timepo faltante"},
     { key: "startTime", title: "Tiempo de llegada." },
     { key: "waitTime", title: "Tiempo de espera" },
-    { key: "endTime", title: "Tiempo de finalizacion" },
     { key: "responseTime", title: "Tiempo de respuesta" },
+    { key: "endTime", title: "Tiempo de finalizacion" },
     { key: "returnTime", title: "Tiempo de retorno" },
   ];
 
@@ -64,61 +63,7 @@ export default function Fourth(): JSX.Element {
     setProcesses((prev: ProcessType[]) => [...prev, newProcess]);
   }
 
-  function renderCell(item: ProcessType, columnKey: Key): ReactNode {
-    const value: string | number = getKeyValue(item, columnKey as string);
-    const operations: string[] = ["+", "-", "*", "/"];
 
-    switch (columnKey) {
-      case "id":
-        return (
-          <Chip variant="flat" color="primary">
-            {value}
-          </Chip>
-        );
-      case "status":
-        return (
-          <Chip variant="flat" color={getColor(value as string)}>
-            {value}
-          </Chip>
-        );
-      case "operation":
-        return (
-          <span className="font-extrabold">
-            {item.firstNumber +
-              " " +
-              operations[item.operation - 1] +
-              " " +
-              item.secondNumber}
-          </span>
-        );
-      case "result":
-        return item.status === "Terminado" ? (
-          <Chip variant="flat" color="primary">
-            {eval(
-              item.firstNumber +
-                " " +
-                operations[item.operation - 1] +
-                " " +
-                item.secondNumber
-            )}
-          </Chip>
-        ) : (
-          "No aplica"
-        );
-      case "timeLeft": 
-        return <span className="text-white font-extrabold">{item.time - (item.timeLeft ?? 0)}</span>
-      case "returnTime":
-        return item.status === "Terminado" ? (
-          <Chip variant="flat" color="primary">{item.endTime ?? 0 - (item.startTime ?? 0)}</Chip>
-        ) : (
-          <Chip variant="flat" color="danger">
-            No aplica.
-          </Chip>
-        );
-      default:
-        return value !== undefined ? <span className="font-extrabold text-white w-full text-center">{value}</span> : <Chip variant="flat" color="danger">No aplica.</Chip>;
-    }
-  }
   useEffect(() => {
     if (isRunning && runningProcesses.length + blockedProcesses.length <= 4) {
       const [first, ...rest] = processes;
@@ -353,7 +298,10 @@ export default function Fourth(): JSX.Element {
                 </Table>
               </ModalBody>
               <ModalFooter>
-                <Button variant="flat" color="danger" onPress={onClose}>
+                <Button variant="flat" color="danger" onPress={() => {
+                  onClose(); 
+                  setIsRunning(true); 
+                }}>
                   Cerrar
                 </Button>
               </ModalFooter>

@@ -49,7 +49,7 @@ export default function Process({
   const [waitedTime, setWaitedTime] = useState<number>((): number => {
     if (status === "Ejecutando"){
       if (waitTime !== undefined){
-        return waitTime === 0 ? 0 : waitTime + 2;
+        return waitTime === 0 ? 0 : waitTime + 1;
       }
       return 0; 
     }
@@ -71,7 +71,7 @@ export default function Process({
             secondNumber,
             id,
             operation,
-            status,
+            status: "Listo",
             timeLeft: time - passedTime,
             startTime: startStaticTime.current,
             responseTime: timeResponse,
@@ -142,7 +142,7 @@ export default function Process({
       }
       return () => clearInterval(interval);
     }
-  }, [status, passedTime]);
+  }, [status, currentTime]);
 
   useEffect(() => {
     if (onSave){
