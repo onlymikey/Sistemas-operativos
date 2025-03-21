@@ -243,7 +243,7 @@ export default function Process({
       }
       return () => clearInterval(interval);
     }
-  }, [blockedTime, status]);
+  }, [blockedTime, status, globalRunning]);
 
   function getOperationSymbol(operation: number): string {
     switch (operation) {
