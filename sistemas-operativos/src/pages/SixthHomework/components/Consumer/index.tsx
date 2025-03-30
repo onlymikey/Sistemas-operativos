@@ -1,25 +1,26 @@
+import { useState, useEffect } from "react";
 import { Card, CardBody, Chip } from "@heroui/react";
 import type { SpecialProps } from "../type/type";
-import { useEffect, useState } from "react";
 
-export default function Producer({
+export default function Consumer({
     elements,
     setElements,
     currentElement,
     setCurrentElement,
 }: SpecialProps): JSX.Element {
-    const [status, setStatus] = useState<"Durmiendo" | "Generado">("Durmiendo");
+    const [status, setStatus] = useState<"Durmiendo" | "Consumiendo">("Durmiendo");
     const [time, setTime] = useState<number>(Math.floor(Math.random() * 6) + 3);
 
     function generateRandomTime(): number {
         return Math.floor(Math.random() * 6) + 3;
     }
+
     useEffect(() => {
         if (status === "Durmiendo") {
             const timeout = setInterval(() => {
                 setTime((prev: number) => {
                     if (prev === 0) {
-                        setStatus("Generado");
+                        setStatus("Consumiendo");
                         return generateRandomTime();
                     }
                     return prev - 1;
@@ -28,35 +29,34 @@ export default function Producer({
             return () => clearInterval(timeout);
         }
 
-        if (status === "Generado") {
-            const quantityElements: number = Math.floor(Math.random() * 5) + 3;
-            const timeout = setInterval(() => {
-                for (let i = 0; i < quantityElements; i++) {
-                    setElements((prev: boolean[]) => {
-                        return prev.map((value: boolean, index: number) => {
-                            if (index === currentElement || index <= (currentElement + quantityElements) % 22) {
-                                return false; 
-                            }
-                            return value; 
-                        })
+        if (status === "Consumiendo") {
+            const quantityElements: number = Math.floor(Math.random() * 4) + 3;
+            const timeout = setTimeout(() => {
+                let consumed = 0;
+                setElements((prev: boolean[]) => {
+                    return prev.map((value: boolean, index: number) => {
+                        if (!value && consumed < quantityElements) {
+                            consumed++;
+                            return true;
+                        }
+                        return value;
                     });
-                    setCurrentElement((prev: number) => prev + 1); 
-                }
+                });
+                setCurrentElement((prev: number) => (prev + consumed) % 22);
                 setStatus("Durmiendo");
-
             }, 1000);
-            return () => clearInterval(timeout);
+            return () => clearTimeout(timeout);
         }
     }, [time, status]);
 
     return (
         <Card
-            className="bg-sky-300/20 border-1 border-sky-300 fixed bottom-2 left-10 z-10"
+            className="bg-green-300/20 border-1 border-green-300 fixed bottom-2 right-10 z-10"
             isPressable
         >
             <CardBody className="flex flex-col items-center justify-center gap-2 p-4">
-                <h2 className="font-extrabold text-4xl">Productor.</h2>
-                <div className="w-full flex flex-row items-center justify-between gap-3 ">
+                <h2 className="font-extrabold text-4xl">Consumidor.</h2>
+                <div className="w-full flex flex-row items-center justify-between gap-3">
                     <p>
                         Tiempo actual del sueño:
                         <span className="font-extrabold"> {time}</span>

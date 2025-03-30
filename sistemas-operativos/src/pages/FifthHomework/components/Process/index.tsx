@@ -111,6 +111,10 @@ export default function Process({
   }
 
   useEffect(() => {
+    save(); 
+  }, [currentTime, blockedTime])
+
+  useEffect(() => {
     if (status === "Ejecutando") {
       if (timeResponse === undefined) {
         setTimeResponse(() => currentTime + 1 - 1);
@@ -187,7 +191,7 @@ export default function Process({
       }, 1e3);
       return () => clearInterval(interval);
     }
-  }, [waitedTime, status]);
+  }, [waitedTime, status, globalRunning]);
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {

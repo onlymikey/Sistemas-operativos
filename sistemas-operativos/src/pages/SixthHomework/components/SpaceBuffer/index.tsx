@@ -1,9 +1,8 @@
 import {Card, CardBody, CardHeader, Divider, Image} from "@heroui/react"; 
 import {motion, AnimatePresence, type Variants} from "framer-motion";
 
-import type { SpaceBuffer as SpaceBufferProps} from "../type/type";
 
-export default function SpaceBuffer({index, isEmpty = false}: SpaceBufferProps): JSX.Element {
+export default function SpaceBuffer({index, isEmpty = false}: {index: number, isEmpty: boolean}): JSX.Element {
     
     const variants: Variants ={
         initial: {

@@ -159,7 +159,7 @@ export default function Process({
       }, 1e3);
       return () => clearInterval(interval);
     }
-  }, [waitedTime, status]);
+  }, [waitedTime, status, globalRunning]);
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -211,6 +211,10 @@ export default function Process({
       window.removeEventListener("keydown", handleKeyDown);
     };
   });
+
+  useEffect(() => {
+    save(); 
+  }, [currentTime, blockedTime]);
 
   useEffect(() => {
     if (status === "Bloqueado" && globalRunning) {

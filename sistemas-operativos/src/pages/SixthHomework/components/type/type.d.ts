@@ -1,13 +1,10 @@
 import type { Dispatch, SetStateAction } from "react";
 
-export type SpaceBuffer = {
-    index: number; 
-    isEmpty: boolean;
-}
+export type SpaceBuffer = boolean[]; 
 
 export type SpecialProps = {
-    setElements: Dispatch<SetStateAction<SpaceBuffer[]>>;
-    elements: SpaceBuffer[];
+    setElements: Dispatch<SetStateAction<boolean[]>>;
+    elements: boolean[];
     currentElement: number;
     setCurrentElement: Dispatch<SetStateAction<number>>;
 }
