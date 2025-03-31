@@ -69,11 +69,7 @@ export default function HomePage(): JSX.Element {
           Simulación del problema clásico del Productor-Consumidor en un sistema
           operativo. En esta implementación, se utiliza un búfer circular con
           capacidad para 22 elementos, donde los procesos productores generan
-          elementos y los procesos consumidores los consumen. Este ejercicio
-          permite observar la sincronización entre procesos y la gestión
-          eficiente de recursos compartidos, destacando la importancia de evitar
-          condiciones de carrera y garantizar la correcta coordinación entre los
-          procesos involucrados.
+          elementos y los procesos consumidores los consumen.
         </Homework>
       </section>
     </main>
