@@ -208,7 +208,7 @@ const App: React.FC = () => {
           </CardBody>
         </Card>
       </div>
-      <div ref={logContainerRef} className="mt-8 max-h-64 overflow-y-auto">
+      <div ref={logContainerRef} className="mt-8 max-h-64 overflow-y-auto rounded-xl">
         <Card>
           <CardBody>
             <h2 className="text-xl font-semibold mb-2">Registro de eventos</h2>
