@@ -204,11 +204,11 @@ export default function Fifth(): JSX.Element {
                         index !== 0 && (
                           <Process
                             key={process.id}
+                            startTime={time}
                             {...process}
                             status={
                               index === 0 && isRunning ? "Ejecutando" : "Listo"
                             }
-                            startTime={time}
                             onSave={save}
                             quantumTime={quantum}
                           />
