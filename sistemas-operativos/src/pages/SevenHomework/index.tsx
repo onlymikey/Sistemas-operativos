@@ -59,8 +59,16 @@ export default function Fifth(): JSX.Element {
     { key: "occupied", title: "Ocupado" },
   ];
 
+  const pageColunsTable = [
+    ...pageColumns,
+    { key: "status", title: "Estado del proceso"}, 
+    {key: "memorySize", title: "Memoria del proceso."}
+  ]
+
+  
+
   function renderPageCell(
-    item: Record<string, string | number | null>,
+    item: MemoryType | MemoryType & ProcessType,
     columnKey: Key
   ): JSX.Element {
     const value: string | number | null = getKeyValue(
@@ -88,12 +96,33 @@ export default function Fifth(): JSX.Element {
             <Progress
               value={((value as number) / 5) * 100}
               aria-label="Progreso del sistema operativo"
+              color={(() => {
+                if (item.process === -1){
+                  return "default"; 
+                }
+                if (value as number === 5){
+                  return "secondary"; 
+                }
+                return "primary";
+              })()}
             />
             <span className="text-tiny font-semibold text-neutral-400 ml-auto">
               {value}/5
             </span>
           </div>
         );
+      }
+      case "status": {
+        return (
+          <Chip variant="flat" color={item.process as number < 0 ? value === "Listo" ? "success":  "warning" : "default"}>{
+            item.process as number < 0 ? "Sistema" : value
+          }</Chip>
+        ); 
+      }
+      case "memorySize": {
+        return <Chip variant="flat">{
+          item.process === -1 ? "Sistema" : value
+        }</Chip>
       }
       default: {
         return <span>{value}</span>;
@@ -467,12 +496,18 @@ export default function Fifth(): JSX.Element {
               </ModalHeader>
               <ModalBody className="overflow-y-auto">
                 <Table>
-                  <TableHeader columns={pageColumns}>
+                  <TableHeader columns={pageColunsTable}>
                     {(column) => (
                       <TableColumn key={column.key}>{column.title}</TableColumn>
                     )}
                   </TableHeader>
-                  <TableBody items={memory}>
+                  <TableBody items={memory.map((page) => {
+                    const process = [...runningProcesses, ...blockedProcesses].find((process) => process.id === page.process);
+                    return {
+                      ...page, 
+                      ...process
+                    }
+                  })}>
                     {(item) => (
                       <TableRow key={item.id}>
                         {(columnKey) => (
