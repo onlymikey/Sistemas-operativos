@@ -71,6 +71,14 @@ export default function HomePage(): JSX.Element {
           capacidad para 22 elementos, donde los procesos productores generan
           elementos y los procesos consumidores los consumen.
         </Homework>
+        <Homework
+          title="Paginación simple"
+          imageUrl="./septima.png"
+          urlTo="/about/seventh"
+        >
+          Simulación de Round Robin usando la tecnica para admistradar memoria
+          de forma dinamica, usando al algoritmo de páginación simple. 
+        </Homework>
       </section>
     </main>
   );
