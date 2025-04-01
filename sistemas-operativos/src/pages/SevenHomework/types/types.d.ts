@@ -13,4 +13,11 @@ export type ProcessType = {
     returnTime?: number; 
     waitTime?: number;
     onSave?: boolean; 
+    memorySize: number; 
+}
+
+export type MemoryType = {
+    id: number;
+    occupied: number;
+    process: number | null;
 }

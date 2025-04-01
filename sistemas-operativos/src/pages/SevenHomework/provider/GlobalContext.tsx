@@ -1,6 +1,6 @@
 import { createContext, useContext } from "react";
 import type { Dispatch, SetStateAction } from "react";
-import type { ProcessType } from "../types/types";
+import type { ProcessType, MemoryType } from "../types/types";
 
 type GlobalContextType = {
     processes: ProcessType[]; 
@@ -10,6 +10,8 @@ type GlobalContextType = {
     isRunning: boolean;
     blockedProcesses: ProcessType[];
     quantum: number; 
+    memory: MemoryType[];  
+    setMemory: Dispatch<SetStateAction<MemoryType[]>>;
     setQuantum: Dispatch<SetStateAction<number>>;
     setBlockedProcesses: Dispatch<SetStateAction<ProcessType[]>>;  
     setProcesses: Dispatch<SetStateAction<ProcessType[]>>;

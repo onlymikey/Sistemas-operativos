@@ -12,7 +12,7 @@ import {
 } from "@heroui/react";
 
 import { useGlobalContext } from "../../provider/GlobalContext";
-import type { ProcessType } from "../../types/types";
+import type { ProcessType, MemoryType } from "../../types/types";
 import { FaClock as Clock } from "react-icons/fa6";
 
 export default function Process({
@@ -28,6 +28,7 @@ export default function Process({
   endTime,
   waitTime,
   quantumTime,
+  memorySize,
   onSave = false,
 }: ProcessType): JSX.Element {
   const [passedTime, setPassedTime] = useState<number>(time - timeLeft);
@@ -42,6 +43,7 @@ export default function Process({
     setBlockedProcesses,
     isRunning: globalRunning,
     runningProcesses,
+    setMemory
   } = useGlobalContext();
   const [timeResponse, setTimeResponse] = useState<number | undefined>(
     responseTime
@@ -73,7 +75,7 @@ export default function Process({
             secondNumber,
             id,
             operation,
-            status: "Listo",
+            status,
             timeLeft: time - passedTime,
             startTime: startStaticTime.current,
             responseTime: timeResponse,
@@ -148,6 +150,7 @@ export default function Process({
             startTime: startStaticTime.current,
             responseTime: timeResponse,
             waitTime: waitedTime,
+            memorySize,
           }
           return [...prev.filter((process) =>  process.id !== id ), currentProcess]; 
         }); 
@@ -169,8 +172,10 @@ export default function Process({
             startTime: startStaticTime.current,
             responseTime: timeResponse,
             waitTime: waitedTime,
+            memorySize,
           },
         ]);
+        delloacteMemory(); 
       }
       return () => clearInterval(interval);
     }
@@ -181,6 +186,21 @@ export default function Process({
       save(); 
     }
   }, [onSave])
+
+  function delloacteMemory(): void {
+    setMemory((prev: MemoryType[]) => {
+      return prev.map((memory: MemoryType) => {
+        if (memory.process === id){
+          return {
+            id: memory.id,
+            occupied: 0,
+            process: null
+          }
+        }
+        return memory; 
+      })
+    })
+  }
 
 
   useEffect(() => {
@@ -212,8 +232,10 @@ export default function Process({
             startTime: startStaticTime.current,
             responseTime: timeResponse,
             waitTime: waitedTime,
+            memorySize,
           },
         ]);
+        delloacteMemory();
       }
 
       if (event.key === "i" && status === "Ejecutando") {
@@ -234,6 +256,7 @@ export default function Process({
             startTime: startStaticTime.current,
             responseTime: timeResponse,
             waitTime: waitedTime,
+            memorySize
           },
         ]);
       }
@@ -271,6 +294,7 @@ export default function Process({
             startTime: startStaticTime.current,
             responseTime: timeResponse,
             waitTime: waitedTime,
+            memorySize,
           },
         ]);
       }
@@ -451,6 +475,7 @@ export default function Process({
                 </p>
             )
           }
+          <p className="font-semibold">Tamaño en memoria {memorySize}</p>
         </CardBody>
       </Card>
     </motion.div>

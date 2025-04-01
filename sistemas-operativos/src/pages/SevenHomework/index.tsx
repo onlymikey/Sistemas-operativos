@@ -1,12 +1,12 @@
 import NavBar from "./components/NavBar";
 import ProcessList from "./components/ProcessList";
 import NoValue from "../SecondHomework/components/NoValues";
-import { useState, useEffect } from "react";
-import type { ProcessType } from "./types/types";
+import { useState, useEffect, type Key } from "react";
+import type { ProcessType, MemoryType } from "./types/types";
 import Process from "./components/Process";
 import { GlobalContext } from "./provider/GlobalContext";
 import NumberFlow from "@number-flow/react";
-import { Switch, Divider, TableBody } from "@heroui/react";
+import { Switch, Divider, TableBody, Card, CardBody } from "@heroui/react";
 import {
   Modal,
   ModalContent,
@@ -20,8 +20,12 @@ import {
   TableColumn,
   TableHeader,
   useDisclosure,
+  getKeyValue,
+  Chip,
+  Progress,
 } from "@heroui/react";
 import { renderCell } from "./utils";
+import { AnimatedShinyText } from "./components/ShinyText";
 
 export default function Fifth(): JSX.Element {
   const [processes, setProcesses] = useState<ProcessType[]>([]);
@@ -33,7 +37,100 @@ export default function Fifth(): JSX.Element {
   const [showNewProcess, setShowNewProcess] = useState<boolean>(false);
   const [quantum, setQuantum] = useState<number>(0);
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
+  const {
+    isOpen: isTableOpen,
+    onOpen: onTableOpen,
+    onOpenChange: onTableOpenChange,
+  } = useDisclosure();
   const [save, setSave] = useState<boolean>(false);
+  const [memory, setMemory] = useState<MemoryType[]>(
+    Array.from({ length: 46 }, (_, index) => {
+      if (index <= 40) {
+        return { id: index, occupied: 0, process: null };
+      } else {
+        return { id: index, occupied: 5, process: -1 };
+      }
+    })
+  );
+
+  const pageColumns = [
+    { key: "id", title: "Marco" },
+    { key: "process", title: "Proceso" },
+    { key: "occupied", title: "Ocupado" },
+  ];
+
+  function renderPageCell(
+    item: Record<string, string | number | null>,
+    columnKey: Key
+  ): JSX.Element {
+    const value: string | number | null = getKeyValue(
+      item,
+      columnKey as string
+    );
+    switch (columnKey) {
+      case "id": {
+        return (
+          <Chip variant="flat" color="primary">
+            {(value)}
+          </Chip>
+        );
+      }
+      case "process": {
+        return (
+          <Chip variant="flat" color={value === null ? "success" : "warning"}>
+            {value === null ? "Libre" : value as number <= 0 ? "Sistema." : value}
+          </Chip>
+        );
+      }
+      case "occupied": {
+        return (
+          <div className="flex flex-col gap-1">
+            <Progress
+              value={((value as number) / 5) * 100}
+              aria-label="Progreso del sistema operativo"
+            />
+            <span className="text-tiny font-semibold text-neutral-400 ml-auto">
+              {value}/5
+            </span>
+          </div>
+        );
+      }
+      default: {
+        return <span>{value}</span>;
+      }
+    }
+  }
+
+  function isMemoryAvaible(memorySize: number): boolean {
+    let memoryAvaible: number = 0;
+    for (const page of memory) {
+      if (page.occupied === 0) {
+        memoryAvaible += 5;
+        if (memoryAvaible >= memorySize) {
+          return true;
+        }
+      }
+    }
+    return false;
+  }
+
+  function allocateMemory(process: ProcessType): void {
+    setMemory((prevMemory) => {
+      // Creamos una copia del arreglo de memoria
+      const newMemory = prevMemory.map((page) => ({ ...page }));
+      let memoryRequired = process.memorySize;
+
+      for (let page of newMemory) {
+        if (memoryRequired <= 0) break;
+        if (page.occupied === 0) {
+          page.occupied = memoryRequired >= 5 ? 5 : memoryRequired;
+          page.process = process.id;
+          memoryRequired -= 5;
+        }
+      }
+      return newMemory;
+    });
+  }
 
   const columns: { key: string; title: string }[] = [
     { key: "id", title: "ID" },
@@ -41,8 +138,8 @@ export default function Fifth(): JSX.Element {
     { key: "result", title: "Resultado" },
     { key: "status", title: "Estado" },
     { key: "time", title: "Tiempo máximo." },
-    { key: "passedTime",  title: "Timepo servicio/ejecución."},
-    { key: "timeLeft", title: "Timepo faltante"},
+    { key: "passedTime", title: "Timepo servicio/ejecución." },
+    { key: "timeLeft", title: "Timepo faltante" },
     { key: "startTime", title: "Tiempo de llegada." },
     { key: "waitTime", title: "Tiempo de espera" },
     { key: "responseTime", title: "Tiempo de respuesta" },
@@ -60,24 +157,26 @@ export default function Fifth(): JSX.Element {
       operation: Math.floor(Math.random() * 4) + 1,
       time: Math.floor(Math.random() * 15) + 6,
       status: "Nuevo" as "Nuevo",
+      memorySize: Math.floor(Math.random() * 21) + 6,
     };
     setProcesses((prev: ProcessType[]) => [...prev, newProcess]);
   }
 
-
   useEffect(() => {
-    if (isRunning && runningProcesses.length + blockedProcesses.length <= 4) {
-      const [first, ...rest] = processes;
-      if (first) {
-        setRunningProcesses((prev: ProcessType[]) => [
-          ...prev,
-          { ...first, status: "Listo" },
-        ]);
-      }
+    if (!isRunning || processes.length === 0) return;
 
-      setProcesses(rest);
+    const firstProcess = processes[0];
+
+    if (isMemoryAvaible(firstProcess.memorySize)) {
+      allocateMemory(firstProcess);
+      setRunningProcesses((prev) => [
+        ...prev,
+        { ...firstProcess, status: "Listo" },
+      ]);
+
+      setProcesses((prev) => prev.slice(1));
     }
-  }, [isRunning, runningProcesses, processes]);
+  }, [isRunning, processes, memory]);
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -89,14 +188,22 @@ export default function Fifth(): JSX.Element {
         if (isOpen) {
           onOpenChange();
         }
+        if (isTableOpen) {
+          onTableOpenChange();
+        }
       }
       if (event.key === "b") {
         setSave(true);
         setIsRunning(false);
         onOpen();
       }
-      if (event.key == "n") {
+      if (event.key === "n") {
         generateProcess();
+      }
+      if (event.key === "t") {
+        setSave(true);
+        setIsRunning(false);
+        onTableOpen();
       }
     };
     window.addEventListener("keydown", handleKeyDown);
@@ -121,6 +228,8 @@ export default function Fifth(): JSX.Element {
           isRunning,
           blockedProcesses,
           quantum,
+          memory,
+          setMemory,
           setQuantum,
           setBlockedProcesses,
           setProcesses,
@@ -131,7 +240,33 @@ export default function Fifth(): JSX.Element {
         }}
       >
         <NavBar />
-        <div className="flex md:flex-row flex-col items-start p-2 justify-center w-4/5 gap-2 flex-1">
+
+        <div className="flex md:flex-row flex-col items-start  justify-center w-full p-3 gap-2 flex-1">
+          <Card className="w-4/5">
+            <CardBody className="flex flex-col">
+              <AnimatedShinyText className="text-3xl font-extrabold w-full text-start">
+                Memoria.
+              </AnimatedShinyText>
+              <Table isHeaderSticky>
+                <TableHeader columns={pageColumns}>
+                  {(column) => (
+                    <TableColumn key={column.key}>{column.title}</TableColumn>
+                  )}
+                </TableHeader>
+                <TableBody items={memory}>
+                  {(item) => (
+                    <TableRow key={item.id}>
+                      {(columnKey) => (
+                        <TableCell key={columnKey}>
+                          {renderPageCell(item, columnKey)}
+                        </TableCell>
+                      )}
+                    </TableRow>
+                  )}
+                </TableBody>
+              </Table>
+            </CardBody>
+          </Card>
           <div className="flex flex-col gap-2 w-full">
             <ProcessList title="Procesos nuevos">
               {
@@ -303,10 +438,55 @@ export default function Fifth(): JSX.Element {
                 </Table>
               </ModalBody>
               <ModalFooter>
-                <Button variant="flat" color="danger" onPress={() => {
-                  onClose(); 
-                  setIsRunning(true); 
-                }}>
+                <Button
+                  variant="flat"
+                  color="danger"
+                  onPress={() => {
+                    onClose();
+                    setIsRunning(true);
+                  }}
+                >
+                  Cerrar
+                </Button>
+              </ModalFooter>
+            </>
+          )}
+        </ModalContent>
+      </Modal>
+      <Modal
+        isOpen={isTableOpen}
+        onOpenChange={onTableOpenChange}
+        className="dark text-white"
+        size="full"
+      >
+        <ModalContent>
+          {(onClose: () => void) => (
+            <>
+              <ModalHeader className="font-extrabold text-2xl">
+                Tabla de páginación.
+              </ModalHeader>
+              <ModalBody className="overflow-y-auto">
+                <Table>
+                  <TableHeader columns={pageColumns}>
+                    {(column) => (
+                      <TableColumn key={column.key}>{column.title}</TableColumn>
+                    )}
+                  </TableHeader>
+                  <TableBody items={memory}>
+                    {(item) => (
+                      <TableRow key={item.id}>
+                        {(columnKey) => (
+                          <TableCell key={columnKey}>
+                            {renderPageCell(item, columnKey)}
+                          </TableCell>
+                        )}
+                      </TableRow>
+                    )}
+                  </TableBody>
+                </Table>
+              </ModalBody>
+              <ModalFooter>
+                <Button variant="flat" color="danger" onPress={onClose}>
                   Cerrar
                 </Button>
               </ModalFooter>

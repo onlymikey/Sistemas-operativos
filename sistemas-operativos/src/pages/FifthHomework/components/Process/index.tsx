@@ -73,7 +73,7 @@ export default function Process({
             secondNumber,
             id,
             operation,
-            status: "Listo",
+            status,
             timeLeft: time - passedTime,
             startTime: startStaticTime.current,
             responseTime: timeResponse,

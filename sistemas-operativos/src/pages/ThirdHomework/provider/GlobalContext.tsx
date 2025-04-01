@@ -2,6 +2,7 @@ import { createContext, useContext } from "react";
 import type { Dispatch, SetStateAction } from "react";
 import type { ProcessType } from "../types/types";
 
+
 type GlobalContextType = {
     processes: ProcessType[]; 
     runningProcesses: ProcessType[];
