@@ -9,7 +9,7 @@ export default function HomePage(): JSX.Element {
           Portafolio de evidencias &bull; Sistemas operativos.
         </h1>
         <p className="text-neutral-400 font-semibold">
-          Por Saul Emanuel Yañez Salazar
+          Por Miguel Angel López Bonilla y Diana Laura Gonzalez Hernandez
         </p>
         <Divider className="mt-3" />
       </div>
@@ -51,7 +51,7 @@ export default function HomePage(): JSX.Element {
           agregar una nueva tecla que permite agregar procesos incluso durante
           la ejecucion del programa.
         </Homework>
-        <Homework
+        {/*<Homework
           title="Round Robin"
           imageUrl="./quinta.png"
           urlTo="/about/fifth"
@@ -78,7 +78,7 @@ export default function HomePage(): JSX.Element {
         >
           Simulación de Round Robin usando la tecnica para admistradar memoria
           de forma dinamica, usando al algoritmo de páginación simple. 
-        </Homework>
+        </Homework> */}
       </section>
     </main>
   );
