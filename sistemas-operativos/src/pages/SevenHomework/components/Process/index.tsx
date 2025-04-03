@@ -272,6 +272,7 @@ export default function Process({
     if (status === "Bloqueado" && globalRunning) {
       const interval = setInterval(() => {
         setBlockedTime((prev: number) => prev - 1);
+        setWaitedTime((prev: number) => prev + 1);
         if (runningProcesses.length === 0) {
           setTime((prev: number) => prev + 1);
         }

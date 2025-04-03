@@ -121,8 +121,8 @@ export default function Third(): JSX.Element {
             </ProcessList>
             <ProcessList title="Procesos listos." className="border-blue-500 bg-blue-500/20 border-1 border-dashed">
             {runningProcesses.map((process: ProcessType, index: number) =>  (
-              index !== 0 &&  <Process key={process.id} {...process} status={(index === 0 && isRunning) ? "Ejecutando" : "Listo"} 
-              startTime={time} onSave={save}
+              index !== 0 &&  <Process key={process.id} startTime={time} {...process} status={(index === 0 && isRunning) ? "Ejecutando" : "Listo"} 
+               onSave={save}
               />
             ))}
             </ProcessList>

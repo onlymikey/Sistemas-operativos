@@ -49,7 +49,7 @@ export default function Process({
   const [waitedTime, setWaitedTime] = useState<number>((): number => {
     if (status === "Ejecutando"){
       if (waitTime !== undefined){
-        return waitTime === 0 ? 0 : waitTime + 2;
+        return waitTime === 0 ? 0 : waitTime + 1;
       }
       return 0; 
     }
@@ -87,7 +87,7 @@ export default function Process({
       if (timeResponse === undefined) {
         setTimeResponse(() => currentTime + 1 - 1);
       }
-      if (!staticResponseTime) {
+      if (staticResponseTime === undefined) {
         setStaticResponseTime(staticTime.current);
       }
       const interval = setInterval(() => {
@@ -109,7 +109,7 @@ export default function Process({
             status: "Terminado",
             timeLeft: time - passedTime,
             startTime: startStaticTime.current,
-            responseTime: timeResponse,
+            responseTime: staticResponseTime,
             waitTime: waitedTime,
           },
         ]);
@@ -133,7 +133,7 @@ export default function Process({
       }, 1e3);
       return () => clearInterval(interval);
     }
-  }, [waitedTime, status]);
+  }, [waitedTime, status, globalRunning]);
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -154,6 +154,7 @@ export default function Process({
             startTime: startStaticTime.current,
             responseTime: timeResponse,
             waitTime: waitedTime,
+
           },
         ]);
       }
@@ -190,6 +191,7 @@ export default function Process({
     if (status === "Bloqueado" && globalRunning) {
       const interval = setInterval(() => {
         setBlockedTime((prev: number) => prev - 1);
+        setWaitedTime((prev: number) => prev + 1);
         if (runningProcesses.length === 0) {
           setTime((prev: number) => prev + 1);
         }
@@ -210,14 +212,14 @@ export default function Process({
             status: "Listo",
             timeLeft: time - passedTime,
             startTime: startStaticTime.current,
-            responseTime: timeResponse,
+            responseTime: staticResponseTime ?? timeResponse,
             waitTime: waitedTime,
           },
         ]);
       }
       return () => clearInterval(interval);
     }
-  }, [blockedTime, status]);
+  }, [blockedTime, status, globalRunning]);
 
   function getOperationSymbol(operation: number): string {
     switch (operation) {
@@ -352,7 +354,7 @@ export default function Process({
                   <p className="text-neutral-400">
                     Tiempo de respuesta:
                     <span className="text-white font-extrabold">
-                      {" " + timeResponse}
+                      {" " + staticResponseTime}
                     </span>
                   </p>
                 )}
