@@ -1,4 +1,4 @@
-import NavBar from "./components/NavBar";
+import NavBar from "./components/Navbar";
 import ProcessList from "./components/ProcessList";
 import NoValue from "../SecondHomework/components/NoValues";
 import { useState, useEffect } from "react";
