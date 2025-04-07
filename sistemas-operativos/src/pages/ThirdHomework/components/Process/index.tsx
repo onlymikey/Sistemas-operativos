@@ -354,7 +354,7 @@ export default function Process({
                   <p className="text-neutral-400">
                     Tiempo de respuesta:
                     <span className="text-white font-extrabold">
-                      {" " + staticResponseTime}
+                      {" " + ((staticResponseTime ?? 0) - (startStaticTime.current ?? 0))}
                     </span>
                   </p>
                 )}

@@ -49,7 +49,7 @@ export default function Process({
   const [waitedTime, setWaitedTime] = useState<number>((): number => {
     if (status === "Ejecutando"){
       if (waitTime !== undefined){
-        return waitTime === 0 ? 0 : waitTime + 1;
+        return waitTime; 
       }
       return 0; 
     }
@@ -113,7 +113,7 @@ export default function Process({
       if (timeResponse === undefined) {
         setTimeResponse(() => currentTime + 1 - 1);
       }
-      if (!staticResponseTime) {
+      if (staticResponseTime === undefined) {
         setStaticResponseTime(staticTime.current);
       }
       const interval = setInterval(() => {
@@ -135,8 +135,9 @@ export default function Process({
             status: "Terminado",
             timeLeft: time - passedTime,
             startTime: startStaticTime.current,
-            responseTime: timeResponse,
+            responseTime: staticResponseTime,
             waitTime: waitedTime,
+
           },
         ]);
       }
@@ -199,7 +200,7 @@ export default function Process({
             status: "Bloqueado",
             timeLeft: time - passedTime,
             startTime: startStaticTime.current,
-            responseTime: timeResponse,
+            responseTime: staticResponseTime ?? responseTime,
             waitTime: waitedTime,
           },
         ]);
@@ -220,6 +221,7 @@ export default function Process({
     if (status === "Bloqueado" && globalRunning) {
       const interval = setInterval(() => {
         setBlockedTime((prev: number) => prev - 1);
+        setWaitedTime((prev: number) => prev + 1);
         if (runningProcesses.length === 0) {
           setTime((prev: number) => prev + 1);
         }
@@ -240,8 +242,9 @@ export default function Process({
             status: "Listo",
             timeLeft: time - passedTime,
             startTime: startStaticTime.current,
-            responseTime: timeResponse,
+            responseTime:  staticResponseTime ?? timeResponse,
             waitTime: waitedTime,
+
           },
         ]);
       }
@@ -382,7 +385,7 @@ export default function Process({
                   <p className="text-neutral-400">
                     Tiempo de respuesta:
                     <span className="text-white font-extrabold">
-                      {" " + timeResponse}
+                      {" " + ((staticResponseTime ?? 0) - (startStaticTime.current ?? 0))}
                     </span>
                   </p>
                 )}
