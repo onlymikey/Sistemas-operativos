@@ -62,6 +62,8 @@ export function renderCell(item: ProcessType, columnKey: Key): ReactNode {
       ) : (
         "No aplica"
       );
+    case "responseTime" : 
+      return <span>{(item.responseTime ?? 0) - (item.startTime ??0 )}</span>
     case "timeLeft": 
       return <span className="text-white font-extrabold">{ item.status !== "Nuevo" ? (item.time - (item.time - (item.timeLeft ?? 0))) : item.time}</span>
     case "passedTime": 

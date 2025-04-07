@@ -48,6 +48,8 @@ export function renderCell(item: ProcessType, columnKey: Key): ReactNode {
             item.secondNumber}
         </span>
       );
+    case "responseTime" : 
+      return <span>{(item.responseTime ?? 0) - (item.startTime ??0 )}</span>
     case "result":
       return item.status === "Terminado" ? (
         <Chip variant="flat" color="primary">

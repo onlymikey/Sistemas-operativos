@@ -52,7 +52,7 @@ export default function Process({
   const [waitedTime, setWaitedTime] = useState<number>((): number => {
     if (status === "Ejecutando"){
       if (waitTime !== undefined){
-        return waitTime === 0 ? 0 : waitTime + 2;
+        return waitTime === 0 ? 0 : waitTime + 1;
       }
       return 0; 
     }
@@ -121,7 +121,7 @@ export default function Process({
       if (timeResponse === undefined) {
         setTimeResponse(() => currentTime + 1 - 1);
       }
-      if (!staticResponseTime) {
+      if (staticResponseTime === undefined) {
         setStaticResponseTime(staticTime.current);
       }
       const interval = setInterval(() => {
@@ -170,7 +170,7 @@ export default function Process({
             status: "Terminado",
             timeLeft: time - passedTime,
             startTime: startStaticTime.current,
-            responseTime: timeResponse,
+            responseTime: staticResponseTime,
             waitTime: waitedTime,
             memorySize,
           },
@@ -230,7 +230,7 @@ export default function Process({
             status: "Error",
             timeLeft: time - passedTime,
             startTime: startStaticTime.current,
-            responseTime: timeResponse,
+            responseTime: staticResponseTime ?? responseTime,
             waitTime: waitedTime,
             memorySize,
           },
@@ -436,7 +436,7 @@ export default function Process({
                   <p className="text-neutral-400">
                     Tiempo de respuesta:
                     <span className="text-white font-extrabold">
-                      {" " + timeResponse}
+                    {" " + ((staticResponseTime ?? 0) - (startStaticTime.current ?? 0))}
                     </span>
                   </p>
                 )}
@@ -454,7 +454,12 @@ export default function Process({
                   <p className="text-neutral-400">
                     Tiempo de espera:
                     <span className="text-white font-extrabold">
-                      {" " + (waitedTime)}
+                    {" " + (() => {
+                        if (status === "Terminado" || status === "Error"){
+                          return  (endStaticTime.current ?? 0) - (startTime ?? 0) - (time - timeLeft); 
+                        }
+                        return waitedTime; 
+                      })()}
                     </span>
                   </p>
                 }
