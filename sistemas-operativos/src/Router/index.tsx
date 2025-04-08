@@ -9,6 +9,7 @@ const Fourth = lazy(() => import("../pages/FourthHomework"));
 const Fifth = lazy(() => import("../pages/FifthHomework"));
 const Sixth = lazy(() => import("../pages/SixthHomework"));
 const Seventh = lazy(() => import("../pages/SevenHomework"));
+const Eight = lazy(() => import("../pages/EightHomework"));
 const DescriptionFirst = lazy(() => import("../pages/DescriptionFirst"));
 const DescriptionSecond = lazy(() => import("../pages/DescriptionSecond"));
 const DescriptionThird = lazy(() => import("../pages/DescriptionThird"));
@@ -30,6 +31,7 @@ export default function AppRouter(): JSX.Element {
                     <Route path="/workspace/fifth-homework" element={<Fifth />} />
                     <Route path="/workspace/sixth-homework" element={<Sixth />} />
                     <Route path="/workspace/seventh-homework" element={<Seventh />} />
+                    <Route path="/workspace/eighth-homework" element={<Eight />} />
                     <Route path="/about/first" element={<DescriptionFirst />} />
                     <Route path="/about/second" element={<DescriptionSecond />} />
                     <Route path="/about/third" element={<DescriptionThird />} />
