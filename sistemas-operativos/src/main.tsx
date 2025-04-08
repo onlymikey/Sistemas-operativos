@@ -1,9 +1,13 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
+import { HeroUIProvider, ToastProvider } from '@heroui/react'
 import App from './App.tsx'
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <App />
+    <HeroUIProvider >
+      <ToastProvider />
+        <App />
+    </HeroUIProvider>
   </StrictMode>,
 )

@@ -9,6 +9,7 @@ import {
   PopoverContent,
   PopoverTrigger,
   Progress,
+  addToast,
 } from "@heroui/react";
 
 import { useGlobalContext } from "../../provider/GlobalContext";
@@ -29,6 +30,7 @@ export default function Process({
   waitTime,
   quantumTime,
   memorySize,
+  index, 
   onSave = false,
 }: ProcessType): JSX.Element {
   const [passedTime, setPassedTime] = useState<number>(time - timeLeft);
@@ -43,7 +45,9 @@ export default function Process({
     setBlockedProcesses,
     isRunning: globalRunning,
     runningProcesses,
-    setMemory
+    setMemory, 
+    memory, 
+    setSuspendedProcesses
   } = useGlobalContext();
   const [timeResponse, setTimeResponse] = useState<number | undefined>(
     responseTime
@@ -62,6 +66,38 @@ export default function Process({
   const endStaticTime = useRef<number | undefined>(endTime);
   const staticTime = useRef<number>(currentTime);
   const [quantum, setQuantum] = useState<number | undefined>(quantumTime);
+
+
+  function allocateMemory(process: ProcessType): void {
+    setMemory((prevMemory) => {
+      // Creamos una copia del arreglo de memoria
+      const newMemory = prevMemory.map((page) => ({ ...page }));
+      let memoryRequired = process.memorySize;
+
+      for (let page of newMemory) {
+        if (memoryRequired <= 0) break;
+        if (page.occupied === 0) {
+          page.occupied = memoryRequired >= 5 ? 5 : memoryRequired;
+          page.process = process.id;
+          memoryRequired -= 5;
+        }
+      }
+      return newMemory;
+    });
+  }
+
+  function isMemoryAvaible(memorySize: number): boolean {
+    let memoryAvaible: number = 0;
+    for (const page of memory) {
+      if (page.occupied === 0) {
+        memoryAvaible += 5;
+        if (memoryAvaible >= memorySize) {
+          return true;
+        }
+      }
+    }
+    return false;
+  }
   
   function save(): void {
     if (status === "Ejecutando" || status === "Listo"){
@@ -260,6 +296,72 @@ export default function Process({
           },
         ]);
       }
+
+      if (event.key === "s" && status === "Bloqueado" && index === 0){
+        setBlockedProcesses((prev: ProcessType[]) => prev.filter((process: ProcessType) => process.id !== id));
+        setSuspendedProcesses((prev: ProcessType[]) => [
+          ...prev,
+          {
+            time,
+            firstNumber,
+            secondNumber,
+            id,
+            operation,
+            status: "Suspendido",
+            timeLeft: time - passedTime,
+            startTime: startStaticTime.current,
+            responseTime: timeResponse,
+            waitTime: waitedTime,
+            memorySize
+          },
+        ]);
+        delloacteMemory(); 
+      }
+
+      if (event.key === "r" && status === "Suspendido" && index === 0){
+        if (!isMemoryAvaible(memorySize)){
+          addToast({
+            title: "Error",
+            description: "No hay suficiente memoria disponible.",
+            color: "danger",
+            variant: "flat",
+            classNames: {
+              base: "dark"
+            }
+          });
+          return; 
+        }
+        allocateMemory({
+          time,
+          firstNumber,
+          secondNumber,
+          id,
+          operation,
+          status: "Listo",
+          timeLeft: time - passedTime,
+          startTime: startStaticTime.current,
+          responseTime: timeResponse,
+          waitTime: waitedTime,
+          memorySize
+        });
+        setSuspendedProcesses((prev: ProcessType[]) => prev.filter((process: ProcessType) => process.id !== id));
+        setRunningProcesses((prev: ProcessType[]) => [
+          ...prev,
+          {
+            time,
+            firstNumber,
+            secondNumber,
+            id,
+            operation,
+            status: "Listo",
+            timeLeft: time - passedTime,
+            startTime: startStaticTime.current,
+            responseTime: timeResponse,
+            waitTime: waitedTime,
+            memorySize
+          },
+        ]);
+      }
     };
 
     window.addEventListener("keydown", handleKeyDown);
@@ -273,7 +375,7 @@ export default function Process({
       const interval = setInterval(() => {
         setBlockedTime((prev: number) => prev - 1);
         setWaitedTime((prev: number) => prev + 1);
-        if (runningProcesses.length === 0) {
+        if (runningProcesses.length === 0 && index === 0) {
           setTime((prev: number) => prev + 1);
         }
       }, 1e3);
@@ -302,6 +404,18 @@ export default function Process({
       return () => clearInterval(interval);
     }
   }, [blockedTime, status, globalRunning]);
+
+  useEffect(() => {
+    if (status === "Suspendido" && globalRunning){
+      const interval = setInterval(() => {
+        setWaitedTime((prev: number) => prev + 1); 
+        if (runningProcesses.length === 0 && index === 0){
+          setTime((prev: number) => prev + 1); 
+        }
+      }, 1e3);
+      return () => clearInterval(interval);
+    }
+  }, [status, waitedTime, globalRunning])
 
   function getOperationSymbol(operation: number): string {
     switch (operation) {
@@ -429,7 +543,7 @@ export default function Process({
                   </p>
                 )}
 
-                {endTime && (
+                {(endTime && status === "Terminado" || status === "Error") && (
                   <p className="text-neutral-400">
                     Tiempo de finalizacion:
                     <span className="font-extrabold text-white">

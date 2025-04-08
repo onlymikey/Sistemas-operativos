@@ -24,14 +24,18 @@ import {
   Chip,
   Progress,
 } from "@heroui/react";
-import { renderCell } from "./utils";
+import { renderCell, downloadSuspendedProcess } from "./utils";
 import { AnimatedShinyText } from "./components/ShinyText";
+import { FaFile as File } from "react-icons/fa";
 
 export default function Eight(): JSX.Element {
   const [processes, setProcesses] = useState<ProcessType[]>([]);
   const [runningProcesses, setRunningProcesses] = useState<ProcessType[]>([]);
   const [doneProcesses, setDoneProcesses] = useState<ProcessType[]>([]);
   const [blockedProcesses, setBlockedProcesses] = useState<ProcessType[]>([]);
+  const [suspendedProcesses, setSuspendedProcesses] = useState<ProcessType[]>(
+    []
+  );
   const [isRunning, setIsRunning] = useState<boolean>(false);
   const [time, setTime] = useState<number>(0);
   const [showNewProcess, setShowNewProcess] = useState<boolean>(false);
@@ -61,14 +65,12 @@ export default function Eight(): JSX.Element {
 
   const pageColunsTable = [
     ...pageColumns,
-    { key: "status", title: "Estado del proceso"}, 
-    {key: "memorySize", title: "Memoria del proceso."}
-  ]
-
-  
+    { key: "status", title: "Estado del proceso" },
+    { key: "memorySize", title: "Memoria del proceso." },
+  ];
 
   function renderPageCell(
-    item: MemoryType | MemoryType & ProcessType,
+    item: MemoryType | (MemoryType & ProcessType),
     columnKey: Key
   ): JSX.Element {
     const value: string | number | null = getKeyValue(
@@ -79,14 +81,18 @@ export default function Eight(): JSX.Element {
       case "id": {
         return (
           <Chip variant="flat" color="primary">
-            {(value)}
+            {value}
           </Chip>
         );
       }
       case "process": {
         return (
           <Chip variant="flat" color={value === null ? "success" : "warning"}>
-            {value === null ? "Libre" : value as number <= 0 ? "Sistema." : value}
+            {value === null
+              ? "Libre"
+              : (value as number) <= 0
+              ? "Sistema."
+              : value}
           </Chip>
         );
       }
@@ -97,11 +103,11 @@ export default function Eight(): JSX.Element {
               value={((value as number) / 5) * 100}
               aria-label="Progreso del sistema operativo"
               color={(() => {
-                if (item.process === -1){
-                  return "default"; 
+                if (item.process === -1) {
+                  return "default";
                 }
-                if (value as number === 5){
-                  return "secondary"; 
+                if ((value as number) === 5) {
+                  return "secondary";
                 }
                 return "primary";
               })()}
@@ -114,15 +120,24 @@ export default function Eight(): JSX.Element {
       }
       case "status": {
         return (
-          <Chip variant="flat" color={item.process as number < 0 ? value === "Listo" ? "success":  "warning" : "default"}>{
-            item.process as number < 0 ? "Sistema" : value
-          }</Chip>
-        ); 
+          <Chip
+            variant="flat"
+            color={
+              (item.process as number) < 0
+                ? value === "Listo"
+                  ? "success"
+                  : "warning"
+                : "default"
+            }
+          >
+            {(item.process as number) < 0 ? "Sistema" : value}
+          </Chip>
+        );
       }
       case "memorySize": {
-        return <Chip variant="flat">{
-          item.process === -1 ? "Sistema" : value
-        }</Chip>
+        return (
+          <Chip variant="flat">{item.process === -1 ? "Sistema" : value}</Chip>
+        );
       }
       default: {
         return <span>{value}</span>;
@@ -258,6 +273,8 @@ export default function Eight(): JSX.Element {
           blockedProcesses,
           quantum,
           memory,
+          suspendedProcesses,
+          setSuspendedProcesses,
           setMemory,
           setQuantum,
           setBlockedProcesses,
@@ -282,7 +299,10 @@ export default function Eight(): JSX.Element {
                     <TableColumn key={column.key}>{column.title}</TableColumn>
                   )}
                 </TableHeader>
-                <TableBody items={memory}>
+                <TableBody
+                  items={memory}
+                  emptyContent="No hay memoria disponible."
+                >
                   {(item) => (
                     <TableRow key={item.id}>
                       {(columnKey) => (
@@ -392,9 +412,15 @@ export default function Eight(): JSX.Element {
               >
                 {blockedProcesses.length > 0 ? (
                   <>
-                    {blockedProcesses.map((processes: ProcessType) => (
-                      <Process key={processes.id} {...processes} />
-                    ))}
+                    {blockedProcesses.map(
+                      (processes: ProcessType, index: number) => (
+                        <Process
+                          key={processes.id}
+                          {...processes}
+                          index={index}
+                        />
+                      )
+                    )}
                   </>
                 ) : (
                   <NoValue
@@ -423,6 +449,41 @@ export default function Eight(): JSX.Element {
             )}
           </ProcessList>
         </div>
+        <Card className="w-1/5 fixed bottom-2 right-2 z-20 max-h-[80vh]">
+          <CardBody className="flex flex-col gap-2">
+            <h2 className="font-extrabold text-2xl">Procesos suspendidos.</h2>
+            <div className="flex flex-col gap-2 overflow-y-auto">
+              {suspendedProcesses.length > 0 ? (
+                suspendedProcesses.map(
+                  (process: ProcessType, index: number) => (
+                    <Process
+                      {...process}
+                      key={process.id}
+                      endTime={time}
+                      onSave={save}
+                      status="Suspendido"
+                      index={index}
+                    />
+                  )
+                )
+              ) : (
+                <NoValue
+                  title="Sin procesos suspendidos."
+                  description="No hay procesos suspendidos actualmente."
+                />
+              )}
+            </div>
+            <Button
+              variant="flat"
+              color="primary"
+              isDisabled={suspendedProcesses.length === 0}
+              startContent={<File aria-hidden className="focus:outline-none" />}
+              onPress={() => downloadSuspendedProcess(suspendedProcesses)}
+            >
+              Descargar archivo de texto.
+            </Button>
+          </CardBody>
+        </Card>
       </GlobalContext.Provider>
       <Modal
         isOpen={isOpen}
@@ -448,11 +509,13 @@ export default function Eight(): JSX.Element {
                   </TableHeader>
                   <TableBody
                     items={[
-                      processes,
-                      runningProcesses,
-                      doneProcesses,
-                      blockedProcesses,
-                    ].flat()}
+                      ...processes,
+                      ...runningProcesses,
+                      ...doneProcesses,
+                      ...blockedProcesses,
+                      ...suspendedProcesses,
+                    ]}
+                    emptyContent="No hay procesos disponibles."
                   >
                     {(item) => (
                       <TableRow key={item.id}>
@@ -501,13 +564,18 @@ export default function Eight(): JSX.Element {
                       <TableColumn key={column.key}>{column.title}</TableColumn>
                     )}
                   </TableHeader>
-                  <TableBody items={memory.map((page) => {
-                    const process = [...runningProcesses, ...blockedProcesses].find((process) => process.id === page.process);
-                    return {
-                      ...page, 
-                      ...process
-                    }
-                  })}>
+                  <TableBody
+                    items={memory.map((page) => {
+                      const process = [
+                        ...runningProcesses,
+                        ...blockedProcesses,
+                      ].find((process) => process.id === page.process);
+                      return {
+                        ...page,
+                        ...process,
+                      };
+                    })}
+                  >
                     {(item) => (
                       <TableRow key={item.id}>
                         {(columnKey) => (

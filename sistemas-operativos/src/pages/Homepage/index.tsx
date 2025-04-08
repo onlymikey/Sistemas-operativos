@@ -76,8 +76,18 @@ export default function HomePage(): JSX.Element {
           imageUrl="./septima.png"
           urlTo="/about/seventh"
         >
-          Simulación de Round Robin usando la tecnica para admistradar memoria
-          de forma dinamica, usando al algoritmo de páginación simple. 
+          Simulación de procesos de un sistema operativo, con la oportunidad de
+          interactuar con los procesos, pausar, reanudar, y bloquear procesos
+          con el teclado.
+        </Homework>
+        <Homework
+          title="Procesos suspendidos."
+          imageUrl="./octava.png"
+          urlTo="/about/eighth"
+        >
+          Simulación de procesos de un sistema operativo, con la oportunidad de
+          interactuar con los procesos, pausar, reanudar, y bloquear procesos
+          con el teclado.
         </Homework>
       </section>
     </main>

@@ -120,3 +120,32 @@ export function renderCell(item: ProcessType, columnKey: Key): ReactNode {
       );
   }
 }
+
+
+export function downloadSuspendedProcess(suspendedProcesses: ProcessType[]) {
+  const operations: string[] = ["+", "-", "*", "/"];
+  const data = suspendedProcesses.map((process) => ({
+    id: process.id, 
+    status: process.status,
+    operation: process.firstNumber + " " + operations[process.operation - 1] + " " + process.secondNumber,
+    time: process.time,
+    timeLeft: process.timeLeft,
+    waitTime: process.waitTime,
+  }))
+  const csvContent =
+    "data:text/csv;charset=utf-8," +
+    data
+      .map((e) => {
+        return Object.values(e).join(",");
+      })
+      .join("\n");
+  const encodedUri = encodeURI(csvContent);
+  const link = document.createElement("a");
+  link.setAttribute("href", encodedUri);
+  link.setAttribute("download", "suspended_processes.csv");
+  document.body.appendChild(link); // Required for FF
+  link.click();
+  document.body.removeChild(link);
+  // Remove the link from the document
+  // Clear the suspended processes
+}

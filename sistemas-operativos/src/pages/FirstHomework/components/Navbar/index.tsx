@@ -69,11 +69,11 @@ export default function NavBar(): JSX.Element{
                             <Select label="Operacion" placeholder="Operacion a realizar" isRequired 
                             onChange={(event: ChangeEvent<HTMLSelectElement>) => setCurrentOperation(parseInt(event.target.value))}
                             variant="bordered" name="operation">
-                                <SelectItem value="1" key={1} startContent={<Plus/>}>Suma</SelectItem>
-                                <SelectItem value="2" key={2} startContent={<Minus/>}>Resta</SelectItem>
-                                <SelectItem value="3" key={3} startContent={<Cross/>}>Multiplicacion</SelectItem>
-                                <SelectItem value="4" key={4} startContent={<Divide/>}>Division</SelectItem>
-                                <SelectItem value="5" key={5} startContent={<Percentage />}>Modulo</SelectItem>
+                                <SelectItem key={1} startContent={<Plus/>}>Suma</SelectItem>
+                                <SelectItem key={2} startContent={<Minus/>}>Resta</SelectItem>
+                                <SelectItem key={3} startContent={<Cross/>}>Multiplicacion</SelectItem>
+                                <SelectItem key={4} startContent={<Divide/>}>Division</SelectItem>
+                                <SelectItem key={5} startContent={<Percentage />}>Modulo</SelectItem>
                             </Select>
                             <Input label="Segundo numero" type="number" variant="bordered" placeholder="Segundo numero" 
                             name="secondNumber" onChange={(event: ChangeEvent<HTMLInputElement>) => setCurrentValue(parseInt(event.target.value))}

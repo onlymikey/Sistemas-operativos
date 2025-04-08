@@ -11,6 +11,8 @@ type GlobalContextType = {
     blockedProcesses: ProcessType[];
     quantum: number; 
     memory: MemoryType[];  
+    suspendedProcesses: ProcessType[];
+    setSuspendedProcesses: Dispatch<SetStateAction<ProcessType[]>>;
     setMemory: Dispatch<SetStateAction<MemoryType[]>>;
     setQuantum: Dispatch<SetStateAction<number>>;
     setBlockedProcesses: Dispatch<SetStateAction<ProcessType[]>>;  

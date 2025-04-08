@@ -17,6 +17,7 @@ const DescriptionFourth = lazy(() => import("../pages/DescriptionFourth"));
 const DescriptionFifth = lazy(() => import("../pages/DescriptionFifth"));
 const DescriptionSixth = lazy(() => import("../pages/DescriptionSixth"));
 const DescriptionSeventh = lazy(() => import("../pages/DescriptionSeventh"));
+const DescriptionEighth = lazy(() => import("../pages/DescriptionEight"));
 
 export default function AppRouter(): JSX.Element {
     return (
@@ -39,6 +40,7 @@ export default function AppRouter(): JSX.Element {
                     <Route path="/about/fifth" element={<DescriptionFifth />} />
                     <Route path="/about/sixth" element={<DescriptionSixth />} />
                     <Route path="/about/seventh" element={<DescriptionSeventh />} />
+                    <Route path="/about/eighth" element={<DescriptionEighth />} />
                 </Routes>
             </Suspense>
         </BrowserRouter>
