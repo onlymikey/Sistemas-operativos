@@ -48,8 +48,24 @@ export function renderCell(item: ProcessType, columnKey: Key): ReactNode {
             item.secondNumber}
         </span>
       );
+      case "waitTime":
+        return (
+          <span>
+            {" " +
+              (() => {
+                if (item.status === "Terminado" || item.status === "Error") {
+                  return (
+                    (item.endTime ?? 0) -
+                    (item.startTime ?? 0) -
+                    (item.time - (item.timeLeft ?? 0))
+                  );
+                }
+                return item.waitTime ?? 0;
+              })()}
+          </span>
+        )
     case "responseTime" : 
-      return <span>{(item.responseTime ?? 0) - (item.startTime ??0 )}</span>
+      return <span>{item.responseTime !== undefined ? (item.responseTime ?? 0) - (item.startTime ?? 0) : "No aplica."}</span>
     case "result":
       return item.status === "Terminado" ? (
         <Chip variant="flat" color="primary">

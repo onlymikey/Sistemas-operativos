@@ -403,7 +403,12 @@ export default function Process({
                   <p className="text-neutral-400">
                     Tiempo de espera:
                     <span className="text-white font-extrabold">
-                      {" " + (waitedTime)}
+                    {" " + (() => {
+                        if (status === "Terminado" || status === "Error"){
+                          return  (endStaticTime.current ?? 0) - (startTime ?? 0) - (time - timeLeft); 
+                        }
+                        return waitedTime; 
+                      })()}
                     </span>
                   </p>
                 }
