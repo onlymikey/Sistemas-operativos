@@ -481,6 +481,13 @@ export default function Process({
                 </p>
             )
           }
+          <p className="font-semibold">
+            Tiempo transcurrido: 
+            <span className="font-extrabold text-white">   
+              {" " + (time - timeLeft)} 
+            </span>
+
+          </p>
           <p className="font-semibold">Tamaño en memoria {memorySize}</p>
         </CardBody>
       </Card>
