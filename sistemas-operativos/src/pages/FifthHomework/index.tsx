@@ -275,6 +275,7 @@ export default function Fifth(): JSX.Element {
               <ModalBody className="overflow-y-auto">
                 <Table
                   isStriped
+                  isHeaderSticky
                   className="border-gray-700 border-1 rounded-xl"
                 >
                   <TableHeader columns={columns}>
