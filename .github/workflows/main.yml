@@ -20,12 +20,12 @@ jobs:
 
       - name: Install dependencies. 
         run: |
-          cd sistemasd-operativos
+          cd sistemas-operativos
           bun install
 
       - name: Build project
         run: |
-          cd sistemasd-operativos
+          cd sistemas-operativos
           bun run build
       
       - name: Publish to Cloudflare pages
