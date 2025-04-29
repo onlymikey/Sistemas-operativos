@@ -30,7 +30,7 @@ function getWaitTime(item: ProcessType): number {
     return (time - (item.startTime ?? 0) - (item.time - (item.timeLeft ?? 0)));
   }
   if (item.status === "Terminado" || item.status === "Error"){
-    return (item.endTime ?? 0 - (item.startTime ?? 0) - (item.time - (item.timeLeft ?? 0)));
+    return ((item.endTime ?? 0) - (item.startTime ?? 0) - (item.time - (item.timeLeft ?? 0)));
   }
   return 0;
 }

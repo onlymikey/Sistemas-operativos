@@ -250,7 +250,7 @@ export default function Process({
       return (currentTime - (startTime ?? 0) - (time - (timeLeft ?? 0)));
     }
     if (status === "Terminado" || status === "Error"){
-      return (endTime ?? 0 - (startTime ?? 0) - (time - (timeLeft ?? 0)));
+      return ((endTime ?? 0) - (startTime ?? 0) - (time - (timeLeft ?? 0)));
     }
     return 0;
   }
