@@ -34,7 +34,7 @@ jobs:
             apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
             accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
             command: |
-              pages deploy dist --project-name sistemas-operativos --commit-dirty=true 
+              pages deploy dist --project-name sistemasoperativos --commit-dirty=true 
             workingDirectory: sistemas-operativos
             gitHubToken: ${{ secrets.GITHUB_TOKEN }}
       
