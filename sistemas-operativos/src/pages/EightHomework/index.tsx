@@ -51,9 +51,8 @@ export default function Eight(): JSX.Element {
     Array.from({ length: 46 }, (_, index) => {
       if (index <= 40) {
         return { id: index, occupied: 0, process: null };
-      } else {
-        return { id: index, occupied: 5, process: -1 };
-      }
+      } 
+      return { id: index, occupied: 5, process: -1 };
     })
   );
 
