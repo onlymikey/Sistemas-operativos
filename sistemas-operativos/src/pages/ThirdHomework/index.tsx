@@ -1,4 +1,3 @@
-import NavBar from "./components/NavBar";
 import ProcessList from "./components/ProcessList";
 import NoValue from "../SecondHomework/components/NoValues";
 import { useState, useEffect } from "react";
@@ -7,6 +6,8 @@ import Process from "./components/Process";
 import { GlobalContext } from "./provider/GlobalContext";
 import NumberFlow from "@number-flow/react";
 import { Switch, Divider } from "@heroui/react";
+import NavBar from "../SecondHomework/components/Navbar";
+
 
 
 export default function Third(): JSX.Element {
@@ -76,7 +77,7 @@ export default function Third(): JSX.Element {
           setIsRunning,
         }}
       >
-        <NavBar />
+        <NavBar time={time} />
         <div className="flex md:flex-row flex-col items-start p-2 justify-center w-4/5 gap-2 flex-1">
           <div className="flex flex-col gap-2 w-full">
           <ProcessList title="Procesos nuevos">
