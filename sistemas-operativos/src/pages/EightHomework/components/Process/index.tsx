@@ -86,7 +86,7 @@ export default function Process({
     });
   }
     function getWaitTime(): number {
-    if (status === "Listo" || status === "Ejecutando" || status === "Bloqueado"){
+    if (status === "Listo" || status === "Ejecutando" || status === "Bloqueado" || status === "Suspendido"){
       return (currentTime - (startTime ?? 0) - (time - (timeLeft ?? 0)));
     }
     if (status === "Terminado" || status === "Error"){

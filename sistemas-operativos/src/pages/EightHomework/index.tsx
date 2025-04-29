@@ -6,7 +6,7 @@ import type { ProcessType, MemoryType } from "./types/types";
 import Process from "./components/Process";
 import { GlobalContext } from "./provider/GlobalContext";
 import NumberFlow from "@number-flow/react";
-import { Switch, Divider, TableBody, Card, CardBody } from "@heroui/react";
+import { Switch, Divider, TableBody, Card, CardBody, CardHeader } from "@heroui/react";
 import {
   Modal,
   ModalContent,
@@ -27,6 +27,7 @@ import {
 import { renderCell, downloadSuspendedProcess } from "./utils";
 import { AnimatedShinyText } from "./components/ShinyText";
 import { FaFile as File } from "react-icons/fa";
+import { MdClose as Close } from "react-icons/md";
 
 export default function Eight(): JSX.Element {
   const [processes, setProcesses] = useState<ProcessType[]>([]);
@@ -40,6 +41,7 @@ export default function Eight(): JSX.Element {
   const [time, setTime] = useState<number>(0);
   const [showNewProcess, setShowNewProcess] = useState<boolean>(false);
   const [quantum, setQuantum] = useState<number>(0);
+  const [isSuspendedOpen, setIsSuspendedOpen] = useState<boolean>(true);
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
   const {
     isOpen: isTableOpen,
@@ -449,8 +451,15 @@ export default function Eight(): JSX.Element {
           </ProcessList>
         </div>
         <Card className="w-1/5 fixed bottom-2 right-2 z-20 max-h-[80vh]">
-          <CardBody className="flex flex-col gap-2">
-            <h2 className="font-extrabold text-2xl">Procesos suspendidos.</h2>
+        <CardHeader className="flex flex-row justify-between gap-2">
+        <h2 className="font-extrabold text-2xl">Procesos suspendidos.</h2>
+            <Button isIconOnly aria-label="Cerrar los procesos suspendidos" variant="light" size="sm"
+            onPress={() => setIsSuspendedOpen(prev => !prev)}
+            >
+              <Close aria-hidden className="focus:outline-none "/>
+            </Button>
+        </CardHeader>
+          <CardBody className="flex flex-col gap-2 data-[open=false]:hidden" data-open={isSuspendedOpen}>
             <div className="flex flex-col gap-2 overflow-y-auto">
               {suspendedProcesses.length > 0 ? (
                 suspendedProcesses.map(

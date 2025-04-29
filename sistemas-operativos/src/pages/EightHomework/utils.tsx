@@ -28,7 +28,7 @@ export function getColor(
 
 function getWaitTime(item: ProcessType): number {
   const { time } = useGlobalContext();
-  if (item.status === "Listo" || item.status === "Ejecutando" || item.status === "Bloqueado"){
+  if (item.status === "Listo" || item.status === "Ejecutando" || item.status === "Bloqueado" || item.status === "Suspendido"){
     return (time - (item.startTime ?? 0) - (item.time - (item.timeLeft ?? 0)));
   }
   if (item.status === "Terminado" || item.status === "Error"){
