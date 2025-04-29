@@ -1,5 +1,6 @@
 import type { ProcessType } from "./types/types";
 import { getKeyValue, Chip } from "@heroui/react";
+import { useGlobalContext } from "./provider/GlobalContext";
 import type { Key, ReactNode } from "react";
 
 export function getColor(
@@ -22,6 +23,18 @@ export function getColor(
       return "default";
   }
 }
+
+function getWaitTime(item: ProcessType): number {
+  const { time } = useGlobalContext();
+  if (item.status === "Listo" || item.status === "Ejecutando" || item.status === "Bloqueado"){
+    return (time - (item.startTime ?? 0) - (item.time - (item.timeLeft ?? 0)));
+  }
+  if (item.status === "Terminado" || item.status === "Error"){
+    return (item.endTime ?? 0 - (item.startTime ?? 0) - (item.time - (item.timeLeft ?? 0)));
+  }
+  return 0;
+}
+
 
 export function renderCell(item: ProcessType, columnKey: Key): ReactNode {
   const value: string | number = getKeyValue(item, columnKey as string);
@@ -53,17 +66,7 @@ export function renderCell(item: ProcessType, columnKey: Key): ReactNode {
       case "waitTime":
         return (
           <span>
-            {" " +
-              (() => {
-                if (item.status === "Terminado" || item.status === "Error") {
-                  return (
-                    (item.endTime ?? 0) -
-                    (item.startTime ?? 0) -
-                    (item.time - (item.timeLeft ?? 0))
-                  );
-                }
-                return item.waitTime ?? 0;
-              })()}
+            {" " + (getWaitTime(item))}
           </span>
         );
       case "responseTime": 

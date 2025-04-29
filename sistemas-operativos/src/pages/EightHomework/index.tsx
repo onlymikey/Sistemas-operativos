@@ -484,7 +484,6 @@ export default function Eight(): JSX.Element {
             </Button>
           </CardBody>
         </Card>
-      </GlobalContext.Provider>
       <Modal
         isOpen={isOpen}
         onOpenChange={onOpenChange}
@@ -597,6 +596,7 @@ export default function Eight(): JSX.Element {
           )}
         </ModalContent>
       </Modal>
+      </GlobalContext.Provider>
     </main>
   );
 }

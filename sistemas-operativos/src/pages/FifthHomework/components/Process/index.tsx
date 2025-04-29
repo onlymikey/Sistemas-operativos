@@ -28,6 +28,7 @@ export default function Process({
   endTime,
   waitTime,
   quantumTime,
+  index, 
   onSave = false,
 }: ProcessType): JSX.Element {
   const [passedTime, setPassedTime] = useState<number>(time - timeLeft);
@@ -244,14 +245,22 @@ export default function Process({
     };
   });
 
+  function getWaitTime(): number {
+    if (status === "Listo" || status === "Ejecutando" || status === "Bloqueado"){
+      return (currentTime - (startTime ?? 0) - (time - (timeLeft ?? 0)));
+    }
+    if (status === "Terminado" || status === "Error"){
+      return (endTime ?? 0 - (startTime ?? 0) - (time - (timeLeft ?? 0)));
+    }
+    return 0;
+  }
+
   useEffect(() => {
     if (status === "Bloqueado" && globalRunning) {
       const interval = setInterval(() => {
         setBlockedTime((prev: number) => prev - 1);
         setWaitedTime((prev: number) => prev + 1);
-        if (runningProcesses.length === 0) {
-          setTime((prev: number) => prev + 1);
-        }
+        setTime((prev: number) => runningProcesses.length === 0 && index === 0 ? prev + 1 : prev);
       }, 1e3);
 
       if (blockedTime <= 0) {
@@ -276,7 +285,7 @@ export default function Process({
       }
       return () => clearInterval(interval);
     }
-  }, [blockedTime, status, globalRunning]);
+  }, [blockedTime, currentTime,  status, globalRunning]);
 
   function getOperationSymbol(operation: number): string {
     switch (operation) {
@@ -429,12 +438,7 @@ export default function Process({
                   <p className="text-neutral-400">
                     Tiempo de espera:
                     <span className="text-white font-extrabold">
-                      {" " + (() => {
-                        if (status === "Terminado" || status === "Error"){
-                          return  (endStaticTime.current ?? 0) - (startTime ?? 0) - (time - timeLeft); 
-                        }
-                        return waitedTime; 
-                      })()}
+                      {" " + (getWaitTime())}
                     </span>
                   </p>
                 }

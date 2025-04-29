@@ -228,8 +228,8 @@ export default function Fifth(): JSX.Element {
               >
                 {blockedProcesses.length > 0 ? (
                   <>
-                    {blockedProcesses.map((processes: ProcessType) => (
-                      <Process key={processes.id} {...processes} />
+                    {blockedProcesses.map((processes: ProcessType, index: number) => (
+                      <Process key={processes.id} {...processes} index={index} />
                     ))}
                   </>
                 ) : (
@@ -259,7 +259,6 @@ export default function Fifth(): JSX.Element {
             )}
           </ProcessList>
         </div>
-      </GlobalContext.Provider>
       <Modal
         isOpen={isOpen}
         onOpenChange={onOpenChange}
@@ -315,6 +314,7 @@ export default function Fifth(): JSX.Element {
           )}
         </ModalContent>
       </Modal>
+      </GlobalContext.Provider>
     </main>
   );
 }
