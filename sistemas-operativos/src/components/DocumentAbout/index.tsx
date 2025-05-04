@@ -15,7 +15,7 @@ export default function DocumentAbout({ title, description, to, homeworkNumber }
             <CardHeader className="flex flex-row items-start justify-center gap-2 ">
                 <Document className="text-2xl mt-1" />
                 <h2 className="text-2xl font-extrabold">{title}</h2>
-                <Chip>{homeworkNumber}</Chip>
+                <Chip className="ml-auto">{homeworkNumber}</Chip>
             </CardHeader>
             <CardBody>
                 <p className="text-gray-400 text-small">{description}</p>

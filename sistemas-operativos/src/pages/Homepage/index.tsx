@@ -109,6 +109,43 @@ export default function HomePage(): JSX.Element {
         description="Modelos de sistemas operativos, explica los diferentes modelos y características de un sistema operativo"
         to="/first"
         />
+        <DocumentAbout  
+        homeworkNumber={3}
+        title="Administracion de procesos"
+        description="Administracion de procesos, explica los diferentes tipos de procesos y como se administran en un sistema operativo"
+        to="/third"
+        />
+        <DocumentAbout  
+        homeworkNumber={4}
+        title="Algoritmos de planificacion"
+        description="Algoritmos de planificacion explica los diferentes algoritmos de planificacion, como se gestionan y su importancia en un sistema operativo"
+        to="/fourth"
+        />
+        <DocumentAbout  
+        homeworkNumber={5}
+        title="Cuestionario para exposicion"
+        description="Preparacion de un cuestionario para la expoosicion de la materia, se abarcaron varios temas generalizados."
+        to="/fifth"
+        />
+          <DocumentAbout  
+          homeworkNumber={6}
+          title="Tecnicas para administracion de memoria"
+          description="Tecnicas para administracion de memoria, se explican las diferentes tecnicas de administracion de memoria"
+          to="/sixth"
+          />
+          <DocumentAbout  
+          homeworkNumber={7}
+          title="Entrada y salida"
+          description="Entrada y salida explica como el sistema opearativo no es un programa, si no un conjunto de programas que se conectan entre si mediante componentes fisicos"
+          to="/seventh"
+          />
+          <DocumentAbout  
+          homeworkNumber={8}
+          title="Seguridad"
+          description="Importancia de la seguridad en un sistema operativo y en la red para mantener la integridad de los datos."
+          to="/seventh"
+          />
+
       </section>
     </main>
   );
