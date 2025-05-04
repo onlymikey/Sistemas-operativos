@@ -1,6 +1,6 @@
 import Homework from "../../components/Homework";
 import { Divider } from "@heroui/react";
-
+import DocumentAbout from "../../components/DocumentAbout";
 export default function HomePage(): JSX.Element {
   return (
     <main className="dark bg-background text-foreground bg-[url('https://astro.build/_astro/HeroBackground.B0iWl89K_2hpsgp.webp')] bg-left bg-cover  min-h-screen w-full font-inter flex items-center flex-col justify-start">
@@ -11,9 +11,10 @@ export default function HomePage(): JSX.Element {
         <p className="text-neutral-400 font-semibold">
           Por Saul Emanuel Yañez Salazar
         </p>
-        <Divider className="mt-3" />
+        <Divider className="my-3" />
+        <h2 className="font-extrabold text-2xl ml">Practicas.</h2>
       </div>
-      <section className="w-full md:w-3/4 grid grid-cols-1 md:grid-cols-3 gap-4 p-2 ">
+      <section className="w-full lg:w-3/4 grid grid-cols-1 md:grid-cols-3 gap-4 p-2 ">
         <Homework
           title="Procesamiento por lotes"
           imageUrl="./primero.png"
@@ -76,19 +77,38 @@ export default function HomePage(): JSX.Element {
           imageUrl="./septima.png"
           urlTo="/about/seventh"
         >
-          Simulación de procesos de un sistema operativo, con la oportunidad de
-          interactuar con los procesos, pausar, reanudar, y bloquear procesos
-          con el teclado.
+          Simulación de un sistema operativo con paginación simple, donde se
+          pueden agregar procesos al sistema, y se muestra la tabla de páginas
+          y el bloque de control de procesos. 
         </Homework>
         <Homework
           title="Procesos suspendidos."
           imageUrl="./octava.png"
           urlTo="/about/eighth"
         >
-          Simulación de procesos de un sistema operativo, con la oportunidad de
-          interactuar con los procesos, pausar, reanudar, y bloquear procesos
-          con el teclado.
+          Simulación de un sistema operativo con procesos suspendidos, donde
+          se pueden agregar procesos al sistema, y se muestra la tabla de
+          páginas y el bloque de control de procesos, además de pasarlo a una lista 
+          de procesos suspendidos.
         </Homework>
+      </section>
+      <Divider 
+      className="my-3 mx-auto lg:w-3/4 w-full"
+      />
+      <h2 className="font-extrabold text-2xl text-start lg:w-3/4 w-full p-2">Tareas.</h2>
+      <section className="w-full lg:w-3/4 grid grid-cols-1 md:grid-cols-3 gap-4 p-2 mb-4 ">
+        <DocumentAbout  
+        homeworkNumber={1}
+        title="Introduccion a los sistemas operativos"
+        description="Introducción a los sistemas operativos, donde se explica bases y generalidades de los sistemas operativos"
+        to="/first"
+        />
+        <DocumentAbout  
+        homeworkNumber={2}
+        title="Modelos de sistemas operativos"
+        description="Modelos de sistemas operativos, explica los diferentes modelos y características de un sistema operativo"
+        to="/first"
+        />
       </section>
     </main>
   );
