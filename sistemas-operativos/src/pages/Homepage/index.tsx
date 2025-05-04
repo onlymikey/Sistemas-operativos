@@ -78,75 +78,104 @@ export default function HomePage(): JSX.Element {
           urlTo="/about/seventh"
         >
           Simulación de un sistema operativo con paginación simple, donde se
-          pueden agregar procesos al sistema, y se muestra la tabla de páginas
-          y el bloque de control de procesos. 
+          pueden agregar procesos al sistema, y se muestra la tabla de páginas y
+          el bloque de control de procesos.
         </Homework>
         <Homework
           title="Procesos suspendidos."
           imageUrl="./octava.png"
           urlTo="/about/eighth"
         >
-          Simulación de un sistema operativo con procesos suspendidos, donde
-          se pueden agregar procesos al sistema, y se muestra la tabla de
-          páginas y el bloque de control de procesos, además de pasarlo a una lista 
-          de procesos suspendidos.
+          Simulación de un sistema operativo con procesos suspendidos, donde se
+          pueden agregar procesos al sistema, y se muestra la tabla de páginas y
+          el bloque de control de procesos, además de pasarlo a una lista de
+          procesos suspendidos.
         </Homework>
       </section>
-      <Divider 
-      className="my-3 mx-auto lg:w-3/4 w-full"
-      />
-      <h2 className="font-extrabold text-2xl text-start lg:w-3/4 w-full p-2">Tareas.</h2>
+      <Divider className="my-3 mx-auto lg:w-3/4 w-full" />
+      <h2 className="font-extrabold text-2xl text-start lg:w-3/4 w-full p-2">
+        Tareas.
+      </h2>
       <section className="w-full lg:w-3/4 grid grid-cols-1 md:grid-cols-3 gap-4 p-2 mb-4 ">
-        <DocumentAbout  
-        homeworkNumber={1}
-        title="Introduccion a los sistemas operativos"
-        description="Introducción a los sistemas operativos, donde se explica bases y generalidades de los sistemas operativos"
-        to="/first"
+        <DocumentAbout
+          homeworkNumber={1}
+          title="Introduccion a los sistemas operativos"
+          description="Introducción a los sistemas operativos, donde se explica bases y generalidades de los sistemas operativos"
+          to="/first"
         />
-        <DocumentAbout  
-        homeworkNumber={2}
-        title="Modelos de sistemas operativos"
-        description="Modelos de sistemas operativos, explica los diferentes modelos y características de un sistema operativo"
-        to="/first"
+        <DocumentAbout
+          homeworkNumber={2}
+          title="Modelos de sistemas operativos"
+          description="Modelos de sistemas operativos, explica los diferentes modelos y características de un sistema operativo"
+          to="/first"
         />
-        <DocumentAbout  
-        homeworkNumber={3}
-        title="Administracion de procesos"
-        description="Administracion de procesos, explica los diferentes tipos de procesos y como se administran en un sistema operativo"
-        to="/third"
+        <DocumentAbout
+          homeworkNumber={3}
+          title="Administracion de procesos"
+          description="Administracion de procesos, explica los diferentes tipos de procesos y como se administran en un sistema operativo"
+          to="/third"
         />
-        <DocumentAbout  
-        homeworkNumber={4}
-        title="Algoritmos de planificacion"
-        description="Algoritmos de planificacion explica los diferentes algoritmos de planificacion, como se gestionan y su importancia en un sistema operativo"
-        to="/fourth"
+        <DocumentAbout
+          homeworkNumber={4}
+          title="Algoritmos de planificacion"
+          description="Algoritmos de planificacion explica los diferentes algoritmos de planificacion, como se gestionan y su importancia en un sistema operativo"
+          to="/fourth"
         />
-        <DocumentAbout  
-        homeworkNumber={5}
-        title="Cuestionario para exposicion"
-        description="Preparacion de un cuestionario para la expoosicion de la materia, se abarcaron varios temas generalizados."
-        to="/fifth"
+        <DocumentAbout
+          homeworkNumber={5}
+          title="Cuestionario para exposicion"
+          description="Preparacion de un cuestionario para la expoosicion de la materia, se abarcaron varios temas generalizados."
+          to="/fifth"
         />
-          <DocumentAbout  
+        <DocumentAbout
           homeworkNumber={6}
           title="Tecnicas para administracion de memoria"
           description="Tecnicas para administracion de memoria, se explican las diferentes tecnicas de administracion de memoria"
           to="/sixth"
-          />
-          <DocumentAbout  
+        />
+        <DocumentAbout
           homeworkNumber={7}
           title="Entrada y salida"
           description="Entrada y salida explica como el sistema opearativo no es un programa, si no un conjunto de programas que se conectan entre si mediante componentes fisicos"
           to="/seventh"
-          />
-          <DocumentAbout  
+        />
+        <DocumentAbout
           homeworkNumber={8}
           title="Seguridad"
           description="Importancia de la seguridad en un sistema operativo y en la red para mantener la integridad de los datos."
           to="/seventh"
-          />
-
+        />
       </section>
+      <section className="flex flex-col items-center justify-center w-full lg:w-3/4 p-2">
+      <Divider className="my-3 mx-auto w-full" />
+        <h2 className="font-extrabold text-2xl text-start w-full">
+          Conclusiones
+        </h2>
+        <p className="my-2 font-semibold">
+          A lo largo del desarrollo del curso de Sistemas Operativos, logramos
+          formar una comprensión sólida y crítica sobre los principios
+          fundamentales que rigen el funcionamiento interno de los sistemas de
+          cómputo modernos. Desde una perspectiva tanto teórica como práctica,
+          se abordaron temas clave como la planificación de procesos, la gestión
+          de la memoria y los mecanismos de seguridad, los cuales resultan
+          pilares esenciales para garantizar el rendimiento, la estabilidad y la
+          protección de cualquier entorno computacional.
+        </p>
+        <p className="my-2 font-semibold">
+        Finalmente, este curso representó una experiencia académica integral,
+          donde se ha vinculado la teoría con la práctica mediante simulaciones
+          que modelan el comportamiento real de un sistema operativo. Los
+          conocimientos adquiridos sientan las bases para comprender en mayor
+          profundidad la interacción entre hardware y software, y proporcionan
+          las herramientas necesarias para diseñar o analizar sistemas complejos
+          con criterios de eficiencia, seguridad y robustez.
+
+        </p>
+      </section>
+      <footer className="bg-gradient-to-t from-blue-600 to-transparent to-25% px-10 py-12 flex items-center justify-center w-full border-1 dark:border-gray-800 border-gray-200">
+    
+        <p className="text-center text-white">&copy; {new Date().getFullYear()} Saul Emanuel Yañez Salazar. Sistemas operativos.</p>
+      </footer>
     </main>
   );
 }
