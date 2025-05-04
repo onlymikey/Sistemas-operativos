@@ -18,6 +18,7 @@ const DescriptionFifth = lazy(() => import("../pages/DescriptionFifth"));
 const DescriptionSixth = lazy(() => import("../pages/DescriptionSixth"));
 const DescriptionSeventh = lazy(() => import("../pages/DescriptionSeventh"));
 const DescriptionEighth = lazy(() => import("../pages/DescriptionEight"));
+const DocumentFirst = lazy(() => import("../pages/Document/First"));
 
 export default function AppRouter(): JSX.Element {
     return (
@@ -25,6 +26,7 @@ export default function AppRouter(): JSX.Element {
             <Suspense>
                 <Routes>
                     <Route path="/" element={<HomePage />} />
+                    <Route path="/first" element={<DocumentFirst />} />
                     <Route path="/workspace/first-homework" element={<First />} />
                     <Route path="/workspace/second-homework" element={<Second />} />
                     <Route path="/workspace/third-homework" element={<Third />} />
