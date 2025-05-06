@@ -26,7 +26,7 @@ export default function AboutHomework({
         <div>
           <h1 className="text-3xl font-extrabold">{title}</h1>
           <p className="text-small text-neutral-400">
-            Por Saul Emanuel Yañez Salazar
+            Por Miguel Angel y Diana Laura.
           </p>
         </div>
       </div>
